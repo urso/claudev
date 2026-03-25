@@ -31,6 +31,13 @@
       "category": "code-quality"
     },
     {
+      "name": "blueprint",
+      "source": "./blueprint",
+      "description": "Design-driven development workflow - designs, stories, style guides, code review, and implementation loops",
+      "keywords": ["development", "workflow", "design", "stories", "code-review", "style-guide"],
+      "category": "development"
+    },
+    {
       "name": "claude-notifications-go",
       "source": {
         "source": "github",

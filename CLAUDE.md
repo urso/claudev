@@ -13,9 +13,19 @@ This repository is a curated Claude Code plugin marketplace. It serves as a regi
 
 ## Adding Plugins
 
-Add new entries to `.claude-plugin/marketplace.json`. When adding a plugin from another marketplace/repo:
+Add new entries to `.claude-plugin/marketplace.json`.
 
-1. Check the upstream repo's `.claude-plugin/marketplace.json` to understand how the plugin is structured.
-2. If the plugin source is `"./"` (repo root), use `"source": "github"` with the repo.
-3. If the plugin source is a subdirectory (e.g. `"./plugins/foo"`), use `"source": "git-subdir"` with the path.
-4. Do NOT pin versions in our marketplace — we want users to always get the latest from upstream.
+### Local plugins (in this repo)
+
+Use a relative path string as the source:
+```json
+{ "name": "my-plugin", "source": "./my-plugin", ... }
+```
+
+### External plugins (from another repo)
+
+Check the upstream repo's `.claude-plugin/marketplace.json` to understand how the plugin is structured.
+
+1. If the plugin source is `"./"` (repo root), use `"source": "github"` with the repo.
+2. If the plugin source is a subdirectory (e.g. `"./plugins/foo"`), use `"source": "git-subdir"` with the path.
+3. Do NOT pin versions in our marketplace — we want users to always get the latest from upstream.
