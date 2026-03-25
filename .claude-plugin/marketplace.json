@@ -1,0 +1,45 @@
+{
+  "name": "claudev",
+  "owner": {
+    "name": "urso"
+  },
+  "metadata": {
+    "description": "Curated collection of Claude Code plugins"
+  },
+  "plugins": [
+    {
+      "name": "bmad",
+      "source": {
+        "source": "git-subdir",
+        "url": "https://github.com/PabloLION/bmad-plugin.git",
+        "path": "plugins/bmad"
+      },
+      "description": "BMAD Method - Breakthrough Method for Agile AI-Driven Development",
+      "license": "MIT",
+      "keywords": ["agile", "development", "workflows", "agents"],
+      "category": "development"
+    },
+    {
+      "name": "nota",
+      "source": {
+        "source": "github",
+        "repo": "urso/nota"
+      },
+      "description": "Code review annotation tool - embed, extract, track, and address structured review comments in source code",
+      "license": "MIT",
+      "keywords": ["code-review", "annotations", "review"],
+      "category": "code-quality"
+    },
+    {
+      "name": "claude-notifications-go",
+      "source": {
+        "source": "github",
+        "repo": "777genius/claude-notifications-go"
+      },
+      "description": "Smart notifications for Claude Code task statuses (Go implementation)",
+      "license": "GPL-3.0",
+      "keywords": ["notifications", "alerts", "productivity", "go", "hooks"],
+      "category": "productivity"
+    }
+  ]
+}
