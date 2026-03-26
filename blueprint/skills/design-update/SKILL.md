@@ -32,6 +32,11 @@ $ARGUMENTS
 
 Parse for design file path, name, or ID.
 
+## Pre-computed Context
+
+### Design Workflows
+!`bash ${CLAUDE_PLUGIN_ROOT}/scripts/list-workflows.sh "" design`
+
 ## Process
 
 ### 1. Find Design
@@ -71,11 +76,7 @@ Return a structured summary of findings. Only include items that are relevant â€
 
 ### 3. Load Design Guidelines
 
-```bash
-bash LIST_WORKFLOWS "" design
-```
-
-Read the listed workflow files for design guidelines.
+Read the workflow files listed in the pre-computed context above for design guidelines.
 
 ### 4. Identify Updates
 

@@ -23,6 +23,17 @@ Develop tasks from a story document with comprehensive planning and implementati
 $ARGUMENTS
 ```
 
+## Pre-computed Context
+
+### All Rules
+!`bash ${CLAUDE_PLUGIN_ROOT}/scripts/list-rules.sh`
+
+Output format (grouped by directory, pipe-separated columns):
+```
+<directory>:
+full/path/to/file.md|name|applies-to|tags|paths|description
+```
+
 ## Process
 
 ### 1. Resolve Directories
@@ -60,16 +71,7 @@ This provides architectural context, decisions, and relevant project files for i
 
 ### 4. Load Applicable Rules
 
-List all rules:
-```bash
-bash LIST_RULES
-```
-
-Output format (grouped by directory, pipe-separated columns):
-```
-<directory>:
-full/path/to/file.md|name|applies-to|tags|paths|description
-```
+Use the rules listing from the pre-computed context above.
 
 Read and apply:
 - All rules where `applies-to` includes `*` or matches the project's languages/technologies

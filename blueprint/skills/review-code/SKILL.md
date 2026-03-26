@@ -26,17 +26,21 @@ Parse for:
 - `--bugs-only` to run only bug review
 - `--efficiency-only` to run only efficiency review
 
+## Pre-computed Context
+
+### Changed Files (unstaged)
+!`git diff --name-only HEAD`
+
+### Changed Files (staged)
+!`git diff --name-only --cached`
+
 ## Process
 
 ### 1. Determine Files to Review
 
 **If files specified:** Use those files.
 
-**If no files specified:** Get staged and unstaged changes:
-```bash
-git diff --name-only HEAD
-git diff --name-only --cached
-```
+**If no files specified:** Use the changed files from the pre-computed context above.
 
 **Filter out non-code files:**
 - Skip: `*.md`, `*.json`, `*.yaml`, `*.yml`, `*.txt`, `*.lock`

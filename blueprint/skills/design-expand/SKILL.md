@@ -34,6 +34,11 @@ $ARGUMENTS
 
 Parse for design file path, name, or ID.
 
+## Pre-computed Context
+
+### Story Workflows
+!`bash ${CLAUDE_PLUGIN_ROOT}/scripts/list-workflows.sh "" story`
+
 ## Process
 
 ### 1. Load Guides
@@ -63,11 +68,7 @@ Show existing stories for this design so we don't create duplicates.
 
 ### 5. Load Story Guidelines
 
-```bash
-bash LIST_WORKFLOWS "" story
-```
-
-Read the listed workflow files for story guidelines.
+Read the workflow files listed in the pre-computed context above for story guidelines.
 
 ### 6. Propose Story Breakdown
 

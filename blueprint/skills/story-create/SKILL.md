@@ -32,17 +32,18 @@ Parse for:
 - `--design <id>` — link to a parent design
 - Or: description of the work for a standalone story
 
+## Pre-computed Context
+
+### Story Workflows
+!`bash ${CLAUDE_PLUGIN_ROOT}/scripts/list-workflows.sh "" story`
+
 ## Process
 
 ### 1. Load Guides
 
 Read DISCOVERY_GUIDE and STORY_OPS for available tools and procedures.
 
-```bash
-bash LIST_WORKFLOWS "" story
-```
-
-Read the listed workflow files for story guidelines.
+Read the workflow files listed in the pre-computed context above for story guidelines.
 
 ### 2. Determine Design Link
 

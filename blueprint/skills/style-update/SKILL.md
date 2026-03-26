@@ -23,15 +23,16 @@ Parse for:
 - Rule file name (e.g., `common`, `go`, `kubernetes`)
 - Rule or learning to add
 
+## Pre-computed Context
+
+### Existing Style Rules
+!`bash ${CLAUDE_PLUGIN_ROOT}/scripts/list-rules.sh "" "" style`
+
 ## Process
 
 ### 1. Check Existing Rules
 
-```bash
-bash LIST_RULES "" "" style
-```
-
-This lists all rules with the 'style' tag.
+Review the style rules listed in the pre-computed context above.
 
 ### 2. Create or Update
 

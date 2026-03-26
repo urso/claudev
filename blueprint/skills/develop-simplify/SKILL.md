@@ -24,17 +24,24 @@ Parse for:
 - Specific files to simplify (optional)
 - `--story <story-file>` for context (optional)
 
+## Pre-computed Context
+
+### Changed Files (unstaged)
+!`git diff --name-only HEAD`
+
+### Changed Files (staged)
+!`git diff --name-only --cached`
+
+### Style Rules
+!`bash ${CLAUDE_PLUGIN_ROOT}/scripts/list-rules.sh "" "" style`
+
 ## Process
 
 ### 1. Determine Files to Simplify
 
 **If files specified:** Use those files.
 
-**If no files specified:** Get uncommitted changes:
-```bash
-git diff --name-only HEAD
-git diff --name-only --cached
-```
+**If no files specified:** Use the changed files from the pre-computed context above.
 
 **Filter out non-code files:**
 - Skip: `*.md`, `*.json`, `*.yaml`, `*.yml`, `*.txt`, `*.lock`
@@ -45,13 +52,9 @@ If no files to simplify, report and exit.
 
 ### 2. Load Style Rules
 
-```bash
-bash LIST_RULES "" "" style
-```
+Read applicable style rules from the pre-computed context above to understand project conventions.
 
 Output format (pipe-separated): `filename|name|applies-to|tags|paths|description`
-
-Read applicable style rules to understand project conventions.
 
 ### 3. Load Story Context (if provided)
 

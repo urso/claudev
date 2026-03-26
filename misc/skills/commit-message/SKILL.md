@@ -4,7 +4,8 @@ user-invocable: true
 disable-model-invocation: false
 argument-hint: "[--story story-file]"
 allowed-tools: ["Read", "Bash(git:*)"]
-model: sonnet
+model: haiku
+effort: low
 ---
 
 # Generate Commit Message
@@ -19,51 +20,47 @@ $ARGUMENTS
 Parse for:
 - `--story <story-file>` for context (optional)
 
+## Pre-computed Context
+
+### Staged Changes Summary
+!`git diff --cached --stat`
+
+### Full Staged Diff
+!`git diff --cached`
+
+### Recent Commits (for style detection)
+!`git log --oneline -10`
+
 ## Process
 
 ### 1. Check Staged Changes
 
-```bash
-git diff --cached --stat
-```
-
-If nothing staged, report and exit:
+If the staged changes summary above is empty, report and exit:
 ```
 No staged changes. Stage files with `git add` first.
 ```
 
-### 2. Get Diff Content
+### 2. Detect Project Commit Style
 
-```bash
-git diff --cached
-```
-
-### 3. Detect Project Commit Style
-
-Look at recent commits:
-```bash
-git log --oneline -10
-```
-
-Detect if project uses:
+From the recent commits above, detect if project uses:
 - Conventional commits (`feat:`, `fix:`, `refactor:`, etc.)
 - Free-form messages
 - Other patterns (e.g., ticket prefixes like `[ABC-123]`)
 
 Match the detected style.
 
-### 4. Load Context (if provided)
+### 3. Load Context (if provided)
 
 If `--story` provided, read the file to understand what was being worked on.
 
-### 5. Analyze Changes
+### 4. Analyze Changes
 
 From the diff, identify:
 - What files changed
 - What kind of change (new feature, bug fix, refactor, tests, docs)
 - Key modifications
 
-### 6. Generate Message
+### 5. Generate Message
 
 **Title (first line):**
 - Max 50 characters
@@ -76,7 +73,7 @@ From the diff, identify:
 - If story provided, can mention: `Part of: <story name>`
 - Blank line between title and body
 
-### 7. Output
+### 6. Output
 
 ```
 ## Suggested Commit Message
@@ -85,14 +82,6 @@ From the diff, identify:
 <title>
 
 <body if needed>
-```
-
-Copy and use with:
-  git commit -m "<title>" -m "<body>"
-
-Or:
-  git commit
-  # Then paste into editor
 ```
 
 ## Guidelines

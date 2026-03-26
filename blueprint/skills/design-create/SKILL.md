@@ -27,15 +27,18 @@ Create a design document that captures problem context, goals, approach, and tec
 $ARGUMENTS
 ```
 
+## Pre-computed Context
+
+### Design Workflows
+!`bash ${CLAUDE_PLUGIN_ROOT}/scripts/list-workflows.sh "" design`
+
 ## Process
 
 ### 1. Load Guides
 
 Read DISCOVERY_GUIDE and DESIGN_OPS for available tools and procedures.
 
-Load workflow guidelines: `bash LIST_WORKFLOWS "" design`
-
-Read the listed workflow files for design guidelines.
+Read the workflow files listed in the pre-computed context above for design guidelines.
 
 ### 2. Understand the Problem
 

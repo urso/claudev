@@ -21,14 +21,16 @@ $ARGUMENTS
 
 Parse for story file or name.
 
+## Pre-computed Context
+
+### Actionable Stories
+!`bash ${CLAUDE_PLUGIN_ROOT}/scripts/query-stories.sh --actionable`
+
 ## Process
 
 ### 1. Resolve Story
 
-If no story specified, list available stories:
-```bash
-bash QUERY_STORIES --actionable
-```
+If no story specified, use the actionable stories from the pre-computed context above.
 
 Determine the story file path to pass to sub-agents.
 

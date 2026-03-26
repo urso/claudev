@@ -24,17 +24,21 @@ $ARGUMENTS
 Parse for:
 - `--story <story-file>` for context (optional)
 
+## Pre-computed Context
+
+### Build Rules
+!`bash ${CLAUDE_PLUGIN_ROOT}/scripts/list-rules.sh "" "" build`
+
+### Style Rules
+!`bash ${CLAUDE_PLUGIN_ROOT}/scripts/list-rules.sh "" "" style`
+
+Output format (pipe-separated): `filename|name|applies-to|tags|paths|description`
+
 ## Process
 
 ### 1. Load Build Rules
 
-```bash
-bash LIST_RULES "" "" build
-```
-
-Output format (pipe-separated): `filename|name|applies-to|tags|paths|description`
-
-Read build rules to get project commands (build, lint, test, format).
+Read build rules from the pre-computed context above to get project commands (build, lint, test, format).
 
 If no build rules exist, ask user for the commands or try common defaults.
 
@@ -50,11 +54,7 @@ If build/lint passes with no errors, report success and exit.
 
 ### 4. Load Style Rules (only if errors found)
 
-```bash
-bash LIST_RULES "" "" style
-```
-
-Read applicable style rules for context on expected patterns when fixing.
+Read applicable style rules from the pre-computed context above for context on expected patterns when fixing.
 
 ### 5. Analyze and Fix Errors
 
