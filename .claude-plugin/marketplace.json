@@ -38,6 +38,13 @@
       "category": "development"
     },
     {
+      "name": "misc",
+      "source": "./misc",
+      "description": "Miscellaneous workflow utilities - commit messages, session handover",
+      "keywords": ["utilities", "commit", "handover", "workflow"],
+      "category": "productivity"
+    },
+    {
       "name": "claude-notifications-go",
       "source": {
         "source": "github",
