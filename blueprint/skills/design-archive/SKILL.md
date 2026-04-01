@@ -1,7 +1,7 @@
 ---
 description: Archive a done design and optionally its stories
 user-invocable: true
-disable-model-invocation: true
+disable-model-invocation: false
 argument-hint: "[design-id or file]"
 allowed-tools: ["Read", "Bash", "AskUserQuestion"]
 ---
@@ -16,6 +16,7 @@ Move a completed design and optionally its stories to the archive directory.
 - **DESIGN_OPS**: `${CLAUDE_PLUGIN_ROOT}/resources/design-operations.md`
 - **STORY_OPS**: `${CLAUDE_PLUGIN_ROOT}/resources/story-operations.md`
 - **QUERY_STORIES**: `${CLAUDE_PLUGIN_ROOT}/scripts/query-stories.sh`
+- **ARCHIVE_DOC**: `${CLAUDE_PLUGIN_ROOT}/scripts/archive-doc.sh`
 
 ## User Input
 ```
@@ -35,7 +36,10 @@ Read DISCOVERY_GUIDE, DESIGN_OPS, and STORY_OPS for available tools and procedur
 - Show associated stories and their statuses via `bash QUERY_STORIES --design <design-id>`
 - Ask user what to archive: design only, design and all stories, or design and specific stories
 - If any selected stories are not `done`, warn the user
-- Use `archive-doc.sh` (documented in `references/archive-operations.md`) to set status and move files
+- Use ARCHIVE_DOC to set status and move files:
+    - `bash ARCHIVE_DOC design <id>` — archive a single design
+    - `bash ARCHIVE_DOC design <id> --with-stories` — archive design and all its stories
+    - `bash ARCHIVE_DOC design <id> --stories-only` — archive only the stories
 - Report what was archived
 
 ## Guidelines
