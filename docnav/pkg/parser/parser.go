@@ -34,8 +34,9 @@ func ParseDocument(path string, content []byte) document.Document {
 		_ = data.Decode(&doc.Frontmatter)
 	}
 
-	// Extract links from AST.
+	// Extract links and headings from AST.
 	doc.Links = extractLinksFromTree(tree, content, filepath.Dir(path))
+	doc.Headings = extractHeadingsFromTree(tree, content)
 	return doc
 }
 
@@ -62,6 +63,29 @@ func ExtractLinks(content []byte, fileDir string) []document.Link {
 	reader := text.NewReader(content)
 	tree := md.Parser().Parse(reader)
 	return extractLinksFromTree(tree, content, fileDir)
+}
+
+func extractHeadingsFromTree(tree ast.Node, source []byte) []string {
+	var headings []string
+	ast.Walk(tree, func(n ast.Node, entering bool) (ast.WalkStatus, error) {
+		if !entering {
+			return ast.WalkContinue, nil
+		}
+		if _, ok := n.(*ast.Heading); !ok {
+			return ast.WalkContinue, nil
+		}
+		var parts []string
+		for c := n.FirstChild(); c != nil; c = c.NextSibling() {
+			if t, ok := c.(*ast.Text); ok {
+				parts = append(parts, string(t.Value(source)))
+			}
+		}
+		if text := strings.Join(parts, ""); text != "" {
+			headings = append(headings, text)
+		}
+		return ast.WalkSkipChildren, nil
+	})
+	return headings
 }
 
 func extractLinksFromTree(tree ast.Node, source []byte, fileDir string) []document.Link {

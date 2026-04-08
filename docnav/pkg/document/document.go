@@ -28,6 +28,7 @@ type Document struct {
 	Path        string
 	Frontmatter Frontmatter
 	Links       []Link
+	Headings    []string
 	IsHub       bool
 }
 
