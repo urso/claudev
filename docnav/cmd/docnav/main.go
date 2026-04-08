@@ -10,6 +10,7 @@ import (
 	"sort"
 	"strings"
 
+	"github.com/bmatcuk/doublestar/v4"
 	"github.com/urso/claudev/docnav/pkg/document"
 	"github.com/urso/claudev/docnav/pkg/linkgraph"
 	"github.com/urso/claudev/docnav/pkg/parser"
@@ -55,6 +56,8 @@ var commands = map[string]func([]string) error{
 	"orphans":      runOrphans,
 	"broken-links": runBrokenLinks,
 	"related":      runRelated,
+	"tags":         runTags,
+	"stale":        runStale,
 }
 
 func run(args []string) error {
@@ -346,6 +349,207 @@ func runRelated(args []string) error {
 		for _, r := range results {
 			fmt.Fprintf(os.Stdout, "%s\t%.4f\tco-citation=%d tags=%d watches=%d content=%.3f\n",
 				r.Path, r.Score, r.CoCitation, r.SharedTags, r.SharedWatches, r.ContentSim)
+		}
+	}
+	return nil
+}
+
+// scanDocs walks the root and parses all markdown documents.
+func scanDocs(root string) ([]document.Document, error) {
+	w := walker.NewWalker(walker.MarkdownFiles())
+	var docs []document.Document
+	for path, err := range w.Walk(root) {
+		if err != nil {
+			return nil, err
+		}
+		content, err := os.ReadFile(path)
+		if err != nil {
+			return nil, err
+		}
+		docs = append(docs, parser.ParseDocument(path, content))
+	}
+	return docs, nil
+}
+
+func runTags(args []string) error {
+	fs := flag.NewFlagSet("tags", flag.ContinueOnError)
+	var gf GlobalFlags
+	gf.Register(fs)
+	if err := fs.Parse(args); err != nil {
+		return err
+	}
+
+	root, err := gf.Root()
+	if err != nil {
+		return err
+	}
+
+	docs, err := scanDocs(root)
+	if err != nil {
+		return err
+	}
+
+	// Build tag → paths map.
+	tagDocs := make(map[string][]string)
+	for _, doc := range docs {
+		for _, tag := range doc.Frontmatter.Tags {
+			tagDocs[tag] = append(tagDocs[tag], doc.Path)
+		}
+	}
+
+	// If a tag argument is given, filter to that tag.
+	if fs.NArg() > 0 {
+		tag := fs.Arg(0)
+		paths := tagDocs[tag]
+		if len(paths) == 0 {
+			return nil
+		}
+		sort.Strings(paths)
+		if gf.JSON {
+			enc := json.NewEncoder(os.Stdout)
+			for _, p := range paths {
+				enc.Encode(struct {
+					Tag  string `json:"tag"`
+					Path string `json:"path"`
+				}{Tag: tag, Path: p})
+			}
+		} else {
+			for _, p := range paths {
+				fmt.Fprintln(os.Stdout, p)
+			}
+		}
+		return nil
+	}
+
+	// List all tags sorted by name.
+	tags := make([]string, 0, len(tagDocs))
+	for tag := range tagDocs {
+		tags = append(tags, tag)
+	}
+	sort.Strings(tags)
+
+	if gf.JSON {
+		enc := json.NewEncoder(os.Stdout)
+		for _, tag := range tags {
+			enc.Encode(struct {
+				Tag   string `json:"tag"`
+				Count int    `json:"count"`
+			}{Tag: tag, Count: len(tagDocs[tag])})
+		}
+	} else {
+		for _, tag := range tags {
+			fmt.Fprintf(os.Stdout, "%s\t%d\n", tag, len(tagDocs[tag]))
+		}
+	}
+	return nil
+}
+
+// matchWatch reports whether a changed file matches a watch pattern.
+// Supports exact paths, directory prefixes (ending in /), and glob patterns.
+// All paths are relative to the git root.
+func matchWatch(watch, changed string) bool {
+	// Directory prefix match.
+	if strings.HasSuffix(watch, "/") {
+		return strings.HasPrefix(changed, watch)
+	}
+	// Glob match — handles exact paths, single-star, and ** patterns.
+	matched, _ := doublestar.Match(watch, changed)
+	return matched
+}
+
+// changedFiles returns file paths changed since the given commit.
+func changedFiles(since string) ([]string, error) {
+	out, err := exec.Command("git", "diff", "--name-only", "--end-of-options", since+"..HEAD").Output()
+	if err != nil {
+		return nil, fmt.Errorf("git diff: %w", err)
+	}
+	var files []string
+	for _, line := range strings.Split(strings.TrimSpace(string(out)), "\n") {
+		if line != "" {
+			files = append(files, line)
+		}
+	}
+	return files, nil
+}
+
+type staleResult struct {
+	Path        string   `json:"path"`
+	Title       string   `json:"title,omitempty"`
+	Watches     []string `json:"matched_watches,omitempty"`
+	UpdatesWhen []string `json:"updates_when,omitempty"`
+}
+
+func runStale(args []string) error {
+	fs := flag.NewFlagSet("stale", flag.ContinueOnError)
+	var gf GlobalFlags
+	gf.Register(fs)
+	var since string
+	fs.StringVar(&since, "since", "HEAD~1", "git commit to diff against (default: HEAD~1)")
+	if err := fs.Parse(args); err != nil {
+		return err
+	}
+
+	root, err := gf.Root()
+	if err != nil {
+		return err
+	}
+
+	changed, err := changedFiles(since)
+	if err != nil {
+		return err
+	}
+
+	docs, err := scanDocs(root)
+	if err != nil {
+		return err
+	}
+
+	var results []staleResult
+	for _, doc := range docs {
+		var matchedWatches []string
+		for _, w := range doc.Frontmatter.Watches {
+			for _, c := range changed {
+				if matchWatch(w, c) {
+					matchedWatches = append(matchedWatches, w)
+					break
+				}
+			}
+		}
+
+		hasWatchHit := len(matchedWatches) > 0
+		hasUpdatesWhen := len(doc.Frontmatter.UpdatesWhen) > 0
+
+		if !hasWatchHit && !hasUpdatesWhen {
+			continue
+		}
+
+		r := staleResult{
+			Path:  doc.Path,
+			Title: doc.Frontmatter.Title,
+		}
+		if hasWatchHit {
+			r.Watches = matchedWatches
+		}
+		if hasUpdatesWhen {
+			r.UpdatesWhen = doc.Frontmatter.UpdatesWhen
+		}
+		results = append(results, r)
+	}
+
+	if gf.JSON {
+		enc := json.NewEncoder(os.Stdout)
+		for _, r := range results {
+			enc.Encode(r)
+		}
+	} else {
+		for _, r := range results {
+			fmt.Fprintf(os.Stdout, "%s\t%s\n", r.Path, r.Title)
+			for _, w := range r.Watches {
+				fmt.Fprintf(os.Stdout, "  watch: %s\n", w)
+			}
+			for _, u := range r.UpdatesWhen {
+				fmt.Fprintf(os.Stdout, "  updates-when: %s\n", u)
+			}
 		}
 	}
 	return nil
