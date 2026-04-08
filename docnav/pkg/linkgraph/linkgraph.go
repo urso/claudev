@@ -82,21 +82,32 @@ func (g *Graph) BrokenLinks() iter.Seq[BrokenLink] {
 
 // Build constructs a link graph by reading and parsing files from the given iterator.
 func Build(files iter.Seq2[string, error]) (*Graph, error) {
+	g, _, _, err := BuildWithDocs(files)
+	return g, err
+}
+
+// BuildWithDocs constructs a link graph and returns all parsed documents
+// along with their raw content keyed by path.
+func BuildWithDocs(files iter.Seq2[string, error]) (*Graph, []document.Document, map[string][]byte, error) {
 	g := NewGraph()
+	var docs []document.Document
+	contents := make(map[string][]byte)
 
 	for path, err := range files {
 		if err != nil {
-			return nil, err
+			return nil, nil, nil, err
 		}
 
 		content, err := os.ReadFile(path)
 		if err != nil {
-			return nil, err
+			return nil, nil, nil, err
 		}
 
 		doc := parser.ParseDocument(path, content)
 		g.AddDocument(doc)
+		docs = append(docs, doc)
+		contents[path] = content
 	}
 
-	return g, nil
+	return g, docs, contents, nil
 }

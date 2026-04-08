@@ -10,8 +10,10 @@ import (
 	"sort"
 	"strings"
 
+	"github.com/urso/claudev/docnav/pkg/document"
 	"github.com/urso/claudev/docnav/pkg/linkgraph"
 	"github.com/urso/claudev/docnav/pkg/parser"
+	"github.com/urso/claudev/docnav/pkg/related"
 	"github.com/urso/claudev/docnav/pkg/search"
 	"github.com/urso/claudev/docnav/pkg/walker"
 )
@@ -47,9 +49,12 @@ func main() {
 }
 
 var commands = map[string]func([]string) error{
-	"search":    runSearch,
-	"links":     runLinks,
-	"backlinks": runBacklinks,
+	"search":       runSearch,
+	"links":        runLinks,
+	"backlinks":    runBacklinks,
+	"orphans":      runOrphans,
+	"broken-links": runBrokenLinks,
+	"related":      runRelated,
 }
 
 func run(args []string) error {
@@ -213,6 +218,134 @@ func runBacklinks(args []string) error {
 	} else {
 		for src := range g.Backlinks(file) {
 			fmt.Fprintln(os.Stdout, src)
+		}
+	}
+	return nil
+}
+
+func runOrphans(args []string) error {
+	fs := flag.NewFlagSet("orphans", flag.ContinueOnError)
+	var gf GlobalFlags
+	gf.Register(fs)
+	if err := fs.Parse(args); err != nil {
+		return err
+	}
+
+	root, err := gf.Root()
+	if err != nil {
+		return err
+	}
+
+	w := walker.NewWalker(walker.MarkdownFiles())
+	g, err := linkgraph.Build(w.Walk(root))
+	if err != nil {
+		return err
+	}
+
+	if gf.JSON {
+		enc := json.NewEncoder(os.Stdout)
+		for path := range g.Orphans() {
+			enc.Encode(struct {
+				Path string `json:"path"`
+			}{Path: path})
+		}
+	} else {
+		for path := range g.Orphans() {
+			fmt.Fprintln(os.Stdout, path)
+		}
+	}
+	return nil
+}
+
+func runBrokenLinks(args []string) error {
+	fs := flag.NewFlagSet("broken-links", flag.ContinueOnError)
+	var gf GlobalFlags
+	gf.Register(fs)
+	if err := fs.Parse(args); err != nil {
+		return err
+	}
+
+	root, err := gf.Root()
+	if err != nil {
+		return err
+	}
+
+	w := walker.NewWalker(walker.MarkdownFiles())
+	g, err := linkgraph.Build(w.Walk(root))
+	if err != nil {
+		return err
+	}
+
+	if gf.JSON {
+		enc := json.NewEncoder(os.Stdout)
+		for bl := range g.BrokenLinks() {
+			enc.Encode(linkResult{
+				Source: bl.Source,
+				Target: bl.Link.Path,
+				Text:   bl.Link.Text,
+				Broken: true,
+			})
+		}
+	} else {
+		for bl := range g.BrokenLinks() {
+			fmt.Fprintf(os.Stdout, "%s\t%s\t%s\n", bl.Source, bl.Link.Text, bl.Link.Path)
+		}
+	}
+	return nil
+}
+
+func runRelated(args []string) error {
+	fs := flag.NewFlagSet("related", flag.ContinueOnError)
+	var gf GlobalFlags
+	gf.Register(fs)
+	var topN int
+	fs.IntVar(&topN, "top", 10, "number of results to return")
+	if err := fs.Parse(args); err != nil {
+		return err
+	}
+	if fs.NArg() < 1 {
+		return fmt.Errorf("usage: docnav related [flags] <file>")
+	}
+
+	file, err := filepath.Abs(fs.Arg(0))
+	if err != nil {
+		return err
+	}
+
+	root, err := gf.Root()
+	if err != nil {
+		return err
+	}
+
+	w := walker.NewWalker(walker.MarkdownFiles())
+	g, docs, contents, err := linkgraph.BuildWithDocs(w.Walk(root))
+	if err != nil {
+		return err
+	}
+
+	// Find target document.
+	var target *document.Document
+	for i := range docs {
+		if docs[i].Path == file {
+			target = &docs[i]
+			break
+		}
+	}
+	if target == nil {
+		return fmt.Errorf("file not found in document set: %s", file)
+	}
+
+	results := related.Related(*target, g, docs, contents, topN)
+
+	if gf.JSON {
+		enc := json.NewEncoder(os.Stdout)
+		for _, r := range results {
+			enc.Encode(r)
+		}
+	} else {
+		for _, r := range results {
+			fmt.Fprintf(os.Stdout, "%s\t%.4f\tco-citation=%d tags=%d watches=%d content=%.3f\n",
+				r.Path, r.Score, r.CoCitation, r.SharedTags, r.SharedWatches, r.ContentSim)
 		}
 	}
 	return nil
