@@ -16,6 +16,7 @@ import (
 	"github.com/urso/claudev/docnav/pkg/parser"
 	"github.com/urso/claudev/docnav/pkg/related"
 	"github.com/urso/claudev/docnav/pkg/search"
+	"github.com/urso/claudev/docnav/pkg/template"
 	"github.com/urso/claudev/docnav/pkg/walker"
 )
 
@@ -58,6 +59,7 @@ var commands = map[string]func([]string) error{
 	"related":      runRelated,
 	"tags":         runTags,
 	"stale":        runStale,
+	"templates":    runTemplates,
 }
 
 func run(args []string) error {
@@ -552,5 +554,56 @@ func runStale(args []string) error {
 			}
 		}
 	}
+	return nil
+}
+
+func runTemplates(args []string) error {
+	fs := flag.NewFlagSet("templates", flag.ContinueOnError)
+	var gf GlobalFlags
+	gf.Register(fs)
+	var templatesDirs multiFlag
+	fs.Var(&templatesDirs, "templates-dir", "additional template directories (can be repeated)")
+	if err := fs.Parse(args); err != nil {
+		return err
+	}
+
+	root, err := gf.Root()
+	if err != nil {
+		return err
+	}
+
+	// Scan extra dirs first, then project-local (project-local wins on override).
+	dirs := append([]string(nil), templatesDirs...)
+	dirs = append(dirs, filepath.Join(root, "docs", "ai", "wiki", "templates"))
+
+	if gf.JSON {
+		enc := json.NewEncoder(os.Stdout)
+		for t, err := range template.Discover(dirs...) {
+			if err != nil {
+				return err
+			}
+			enc.Encode(t)
+		}
+	} else {
+		for t, err := range template.Discover(dirs...) {
+			if err != nil {
+				return err
+			}
+			if t.Description != "" {
+				fmt.Fprintf(os.Stdout, "%s\t%s\n", t.Name, t.Description)
+			} else {
+				fmt.Fprintln(os.Stdout, t.Name)
+			}
+		}
+	}
+	return nil
+}
+
+// multiFlag collects repeated flag values.
+type multiFlag []string
+
+func (f *multiFlag) String() string { return strings.Join(*f, ",") }
+func (f *multiFlag) Set(v string) error {
+	*f = append(*f, v)
 	return nil
 }
