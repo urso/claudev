@@ -1,0 +1,40 @@
+{
+  "skill_name": "doc-nav",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I need to understand how authentication works in this project. Search for any docs about it. Use --path to point at the fixtures directory.",
+      "expected_output": "Should find auth-design.md as the top result, possibly also api-reference.md. Should present the results clearly with paths and titles.",
+      "files": [],
+      "expectations": [
+        "Output mentions auth-design.md as a search result",
+        "Output includes the title 'Authentication Architecture'",
+        "The agent ran docnav search command via the wrapper script",
+        "Results are presented in a readable format, not raw tab-separated output"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "What docs are connected to auth-design.md in the fixtures? I want to see what links to it, what it links to, and what other docs cover similar topics. Use --path to point at the fixtures directory.",
+      "expected_output": "Should show outgoing links (user-store.md, api-reference.md), backlinks (user-store.md, api-reference.md), and related docs. Should present a coherent navigation view.",
+      "files": [],
+      "expectations": [
+        "Output shows outgoing links from auth-design.md (user-store.md and api-reference.md)",
+        "Output shows backlinks to auth-design.md",
+        "The agent ran at least two docnav commands (links and backlinks)",
+        "Results distinguish between outgoing links and incoming backlinks"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Show me all the design docs in the fixtures directory. Use --path to point at the fixtures directory.",
+      "expected_output": "Should find auth-design.md (type: design) and only that one. Should use the --type filter.",
+      "files": [],
+      "expectations": [
+        "Output includes auth-design.md",
+        "Output does NOT include deployment-runbook.md or orphan-note.md as design docs",
+        "The agent used the --type flag to filter results"
+      ]
+    }
+  ]
+}
