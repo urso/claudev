@@ -66,10 +66,11 @@ func NewSearcher(opts ...Option) *Searcher {
 }
 
 // Search finds documents matching query in the given file iterator.
+// If query is empty but filters are set, returns all documents matching the filters.
 func (s *Searcher) Search(files iter.Seq2[string, error], query string) ([]Result, error) {
 	queryTerms := s.tokenizer.Tokenize(query)
 	if len(queryTerms) == 0 {
-		return nil, nil
+		return s.listFiltered(files)
 	}
 	querySet := make(map[string]struct{}, len(queryTerms))
 	for _, t := range queryTerms {
@@ -149,6 +150,39 @@ func (s *Searcher) Search(files iter.Seq2[string, error], query string) ([]Resul
 		return results[i].Score > results[j].Score
 	})
 
+	return results, nil
+}
+
+// listFiltered returns all documents matching type/tag filters without scoring.
+func (s *Searcher) listFiltered(files iter.Seq2[string, error]) ([]Result, error) {
+	var results []Result
+	for path, err := range files {
+		if err != nil {
+			slog.Warn("walk error", "error", err)
+			continue
+		}
+		content, err := os.ReadFile(path)
+		if err != nil {
+			continue
+		}
+		doc := parser.ParseDocument(path, content)
+		if !s.matchFilters(doc) {
+			continue
+		}
+		title := doc.Frontmatter.Title
+		if title == "" {
+			title = filepath.Base(path)
+		}
+		results = append(results, Result{
+			Path:         path,
+			Title:        title,
+			MatchedField: "filter",
+			IsHub:        doc.IsHub,
+		})
+	}
+	sort.Slice(results, func(i, j int) bool {
+		return results[i].Path < results[j].Path
+	})
 	return results, nil
 }
 

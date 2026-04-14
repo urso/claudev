@@ -1,0 +1,8 @@
+{
+  "name": "docnav",
+  "version": "0.1.1",
+  "description": "Navigate, discover, and manage markdown docs in code repositories",
+  "author": {
+    "name": "urso"
+  }
+}

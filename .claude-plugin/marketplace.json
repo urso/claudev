@@ -45,6 +45,13 @@
       "category": "productivity"
     },
     {
+      "name": "docnav",
+      "source": "./docnav",
+      "description": "Navigate, discover, and manage markdown docs in code repositories",
+      "keywords": ["docs", "navigation", "search", "markdown", "wiki"],
+      "category": "documentation"
+    },
+    {
       "name": "claude-notifications-go",
       "source": {
         "source": "github",

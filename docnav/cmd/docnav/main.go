@@ -97,10 +97,10 @@ func runSearch(args []string) error {
 		return err
 	}
 
-	if fs.NArg() < 1 {
-		return fmt.Errorf("usage: docnav search [flags] <query>")
-	}
 	query := fs.Arg(0)
+	if query == "" && typeFilter == "" && tagsFilter == "" {
+		return fmt.Errorf("usage: docnav search [flags] <query>\n  a query is required unless --type or --tags is specified")
+	}
 
 	root, err := gf.Root()
 	if err != nil {
