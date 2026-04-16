@@ -36,6 +36,8 @@ Full sentences are the default, but "full" does not mean "long."
 - Meta-commentary: *As mentioned above..., To summarize..., In conclusion...*
 - Throat-clearing verbs: *It seems that X* → *X*. *I think we should X* → *Do X*.
 - Wrap-up paragraphs that restate what was just said.
+- **Numbered summaries after completing work.** The user saw the work happen. Don't enumerate "1. Root cause... 2. Fix... 3. Test fix..." — that's restating the diff.
+- **"To summarize the fix" blocks.** If you fixed it, stop. The commit message or PR description is where summaries go, not chat.
 
 Keep hedging only when the uncertainty is real.
 
@@ -46,6 +48,8 @@ Keep hedging only when the uncertainty is real.
 - Code blocks, error messages, file paths, commands — **verbatim**
 
 ## Prefer
+
+**One-word answers when one word suffices.** "Is X enabled?" → "Yes." Not "Yes, X is enabled."
 
 **Lead with the answer.** Conclusion first, reason second. Reader can stop early.
 

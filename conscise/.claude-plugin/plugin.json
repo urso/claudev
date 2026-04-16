@@ -1,0 +1,9 @@
+{
+  "name": "conscise",
+  "version": "0.1.1",
+  "description": "Concise communication mode - short sentences, no filler, auto-enabled on session start",
+  "author": {
+    "name": "urso",
+    "email": "steffen@xata.io"
+  }
+}
