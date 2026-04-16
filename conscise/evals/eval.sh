@@ -2,7 +2,7 @@
 # Eval script for conscise plugin
 # Compares baseline vs hook vs skill-invoked responses
 
-set -euo pipefail
+set -uo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PLUGIN_DIR="$(dirname "$SCRIPT_DIR")"
@@ -31,10 +31,7 @@ setup_skill_only() {
   cp -r "$PLUGIN_DIR/skills" "$SKILL_ONLY_DIR/"
 }
 
-cleanup() {
-  rm -rf "$SKILL_ONLY_DIR"
-}
-trap cleanup EXIT
+# cleanup handled in main after TMPDIR is created
 
 run_baseline() {
   local prompt="$1"
@@ -104,39 +101,70 @@ aggregate() {
   echo $((sum / count))
 }
 
+# Run single eval and write results to file
+run_single_eval() {
+  local mode="$1" prompt="$2" outfile="$3"
+  local result
+  case "$mode" in
+    baseline) result=$(run_baseline "$prompt") ;;
+    hook)     result=$(run_hook "$prompt") ;;
+    skill)    result=$(run_skill "$prompt") ;;
+  esac
+  analyze "$result" > "$outfile"
+}
+
 # Main
 setup_skill_only
 
-echo "=== Conscise Plugin Eval (${RUNS} runs per config) ==="
+TMPDIR=$(mktemp -d)
+trap "rm -rf '$TMPDIR' '$SKILL_ONLY_DIR'" EXIT
+
+echo "=== Conscise Plugin Eval (${RUNS} runs per config, parallel) ==="
 echo ""
+
+# Launch all runs in parallel
+pids=()
+for pi in "${!PROMPTS[@]}"; do
+  prompt="${PROMPTS[$pi]}"
+  for mode in baseline hook skill; do
+    for ((r=1; r<=RUNS; r++)); do
+      outfile="$TMPDIR/p${pi}_${mode}_${r}.csv"
+      run_single_eval "$mode" "$prompt" "$outfile" &
+      pids+=($!)
+    done
+  done
+done
+
+# Wait for all (ignore individual failures)
+for pid in "${pids[@]}"; do
+  wait "$pid" || true
+done
+
 echo "| Prompt | Mode | Words | Filler | Pleasantries | Avg Sent | Arrows |"
 echo "|--------|------|-------|--------|--------------|----------|--------|"
 
-for prompt in "${PROMPTS[@]}"; do
+# Collect results
+for pi in "${!PROMPTS[@]}"; do
+  prompt="${PROMPTS[$pi]}"
   short_prompt="${prompt:0:35}..."
 
-  # Arrays for aggregation
-  b_words_arr=() b_filler_arr=() b_pleas_arr=() b_avg_arr=() b_arrows_arr=()
-  h_words_arr=() h_filler_arr=() h_pleas_arr=() h_avg_arr=() h_arrows_arr=()
-  s_words_arr=() s_filler_arr=() s_pleas_arr=() s_avg_arr=() s_arrows_arr=()
+  for mode in baseline hook skill; do
+    words_arr=() filler_arr=() pleas_arr=() avg_arr=() arrows_arr=()
 
-  for ((i=1; i<=RUNS; i++)); do
-    baseline=$(run_baseline "$prompt")
-    hook=$(run_hook "$prompt")
-    skill=$(run_skill "$prompt")
+    for ((r=1; r<=RUNS; r++)); do
+      outfile="$TMPDIR/p${pi}_${mode}_${r}.csv"
+      if [[ -f "$outfile" ]]; then
+        IFS=',' read -r _ words _ filler pleas avg arrows < "$outfile"
+        words_arr+=("$words") filler_arr+=("$filler") pleas_arr+=("$pleas") avg_arr+=("$avg") arrows_arr+=("$arrows")
+      fi
+    done
 
-    IFS=',' read -r _ b_words _ b_filler b_pleas b_avg b_arrows <<< "$(analyze "$baseline")"
-    IFS=',' read -r _ h_words _ h_filler h_pleas h_avg h_arrows <<< "$(analyze "$hook")"
-    IFS=',' read -r _ s_words _ s_filler s_pleas s_avg s_arrows <<< "$(analyze "$skill")"
-
-    b_words_arr+=("$b_words") b_filler_arr+=("$b_filler") b_pleas_arr+=("$b_pleas") b_avg_arr+=("$b_avg") b_arrows_arr+=("$b_arrows")
-    h_words_arr+=("$h_words") h_filler_arr+=("$h_filler") h_pleas_arr+=("$h_pleas") h_avg_arr+=("$h_avg") h_arrows_arr+=("$h_arrows")
-    s_words_arr+=("$s_words") s_filler_arr+=("$s_filler") s_pleas_arr+=("$s_pleas") s_avg_arr+=("$s_avg") s_arrows_arr+=("$s_arrows")
+    if [[ "$mode" == "baseline" ]]; then
+      echo "| $short_prompt | $mode | $(aggregate "${words_arr[@]}") | $(aggregate "${filler_arr[@]}") | $(aggregate "${pleas_arr[@]}") | $(aggregate "${avg_arr[@]}") | $(aggregate "${arrows_arr[@]}") |"
+    else
+      echo "| | $mode | $(aggregate "${words_arr[@]}") | $(aggregate "${filler_arr[@]}") | $(aggregate "${pleas_arr[@]}") | $(aggregate "${avg_arr[@]}") | $(aggregate "${arrows_arr[@]}") |"
+    fi
   done
-
-  echo "| $short_prompt | baseline | $(aggregate "${b_words_arr[@]}") | $(aggregate "${b_filler_arr[@]}") | $(aggregate "${b_pleas_arr[@]}") | $(aggregate "${b_avg_arr[@]}") | $(aggregate "${b_arrows_arr[@]}") |"
-  echo "| | hook | $(aggregate "${h_words_arr[@]}") | $(aggregate "${h_filler_arr[@]}") | $(aggregate "${h_pleas_arr[@]}") | $(aggregate "${h_avg_arr[@]}") | $(aggregate "${h_arrows_arr[@]}") |"
-  echo "| | skill | $(aggregate "${s_words_arr[@]}") | $(aggregate "${s_filler_arr[@]}") | $(aggregate "${s_pleas_arr[@]}") | $(aggregate "${s_avg_arr[@]}") | $(aggregate "${s_arrows_arr[@]}") |"
 done
 
 echo ""
