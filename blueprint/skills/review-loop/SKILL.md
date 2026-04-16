@@ -29,7 +29,7 @@ Skip if `--no-simplify` was specified.
 Spawn sub-agent to simplify the implemented code:
 ```
 Task: Simplify code for clarity
-Use the Skill tool to invoke "blueprint:develop-simplify" with arguments: [--story if provided]
+Use the Skill tool to invoke "blueprint:tidy" with arguments: [--story if provided]
 Return summary of simplifications made.
 ```
 

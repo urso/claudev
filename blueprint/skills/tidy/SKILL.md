@@ -1,5 +1,5 @@
 ---
-description: Simplify code for clarity and maintainability while preserving functionality
+description: Tidy code for clarity and maintainability while preserving functionality
 user-invocable: true
 disable-model-invocation: true
 argument-hint: "[files] [--story story-file]"
@@ -7,9 +7,9 @@ allowed-tools: ["Read", "Write", "Edit", "Glob", "Grep", "Bash(git:*)"]
 model: opus
 ---
 
-# Simplify Code
+# Tidy Code
 
-Simplify and refine code for clarity, consistency, and maintainability while preserving exact functionality. Focuses on uncommitted changes unless specific files are provided.
+Tidy and refine code for clarity, consistency, and maintainability while preserving exact functionality. Focuses on uncommitted changes unless specific files are provided.
 
 ## Variables
 

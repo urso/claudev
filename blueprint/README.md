@@ -103,7 +103,7 @@ For quick tasks without formal tracking, use `/development` for guidance on impl
 |-------|-------------|
 | `/develop-story` | Implement selected tasks from a story |
 | `/develop-fix` | Fix build and lint errors |
-| `/develop-simplify` | Simplify code for clarity without changing behavior |
+| `/tidy` | Tidy code for clarity without changing behavior |
 | `/develop-loop` | Full loop: implement -> fix -> review (orchestrates everything) |
 
 ### Code Review
