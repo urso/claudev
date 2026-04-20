@@ -112,7 +112,7 @@ For quick tasks without formal tracking, use `/development` for guidance on impl
 |-------|-------------|
 | `/review-code` | Review code for style, bugs, and efficiency |
 | `/review-fix` | Review and fix issues iteratively (max 5 cycles) |
-| `/review-loop` | Simplify -> fix -> review-fix cycle |
+| `/review-loop` | Tidy -> fix -> review-fix cycle |
 
 ### Utilities
 
@@ -165,7 +165,7 @@ A typical session works on a subset of tasks from a story:
 1. `/develop-story` — select tasks, review the plan, implement
 2. `/story-update` — verify the story doc reflects what was done
 3. `/develop-fix` — fix any build/lint errors
-4. Optionally `/review-loop` — simplify and review code
+4. Optionally `/review-loop` — tidy and review code
 
 `/develop-loop` chains all of these automatically (implement -> fix -> review). It's convenient when the task is well-defined, but `/develop-story` gives more control for ambiguous or exploratory work.
 

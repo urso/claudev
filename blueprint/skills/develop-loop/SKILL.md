@@ -64,11 +64,11 @@ Wait for completion.
 
 ### 4. Review Loop (Sub-agent)
 
-Spawn sub-agent to run the review loop (simplify + fix + review-fix cycle):
+Spawn sub-agent to run the review loop (tidy + fix + review-fix cycle):
 ```
 Task: Run review loop
 Use the Skill tool to invoke "blueprint:review-loop" with arguments: --story <story-file>
-This only simplifies and fixes review issues - it does NOT implement new functionality.
+This only tidies and fixes review issues - it does NOT implement new functionality.
 Return final status and any remaining issues.
 ```
 
@@ -113,4 +113,4 @@ If issues remain:
 - Step 2's sub-agent interacts with user for task selection and plan approval
 - Steps 3-5 run automatically without user interaction
 - Story document is updated by /develop-story before continuing
-- /review-loop handles simplify, build fix, and review-fix cycle
+- /review-loop handles tidy, build fix, and review-fix cycle

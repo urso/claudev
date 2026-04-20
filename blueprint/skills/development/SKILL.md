@@ -144,7 +144,7 @@ For automated end-to-end development:
 This orchestrates:
 1. `/develop-story` - Implement tasks (interactive)
 2. `/develop-fix` - Fix build errors
-3. `/review-loop` - Simplify, fix, and review-fix cycle
+3. `/review-loop` - Tidy, fix, and review-fix cycle
 4. Present final results
 
 ## Key Principles

@@ -1,14 +1,14 @@
 ---
-description: Simplify, fix build, and review-fix code in a loop until clean (no implementation)
+description: Tidy, fix build, and review-fix code in a loop until clean (no implementation)
 user-invocable: true
 disable-model-invocation: true
-argument-hint: "[--story story-file] [--max-cycles N] [--no-simplify]"
+argument-hint: "[--story story-file] [--max-cycles N] [--no-tidy]"
 allowed-tools: ["Read", "Glob", "Bash", "Task"]
 ---
 
 # Review Loop
 
-Post-implementation review workflow: simplify code, fix build, then review+fix cycle until clean. Use this when code is already implemented and you only need the review pass.
+Post-implementation review workflow: tidy code, fix build, then review+fix cycle until clean. Use this when code is already implemented and you only need the review pass.
 
 ## User Input
 ```
@@ -18,30 +18,30 @@ $ARGUMENTS
 Parse for:
 - `--story <story-file>` for context (optional)
 - `--max-cycles N` to override review-fix max cycles (optional, default 5)
-- `--no-simplify` to skip the simplify step (optional)
+- `--no-tidy` to skip the tidy step (optional)
 
 ## Process
 
-### 1. Simplify Code (Sub-agent)
+### 1. Tidy Code (Sub-agent)
 
-Skip if `--no-simplify` was specified.
+Skip if `--no-tidy` was specified.
 
-Spawn sub-agent to simplify the implemented code:
+Spawn sub-agent to tidy the implemented code:
 ```
-Task: Simplify code for clarity
+Task: Tidy code for clarity
 Use the Skill tool to invoke "blueprint:tidy" with arguments: [--story if provided]
-Return summary of simplifications made.
+Return summary of changes made.
 ```
 
 Wait for completion.
 
-### 2. Fix Build After Simplify (Sub-agent)
+### 2. Fix Build After Tidy (Sub-agent)
 
 Skip if step 1 was skipped.
 
-Spawn sub-agent to fix any build/lint errors introduced by simplification:
+Spawn sub-agent to fix any build/lint errors introduced by tidying:
 ```
-Task: Fix build errors after simplify
+Task: Fix build errors after tidy
 Use the Skill tool to invoke "blueprint:develop-fix" with arguments: [--story if provided]
 Return build status (pass/fail).
 ```
@@ -66,8 +66,8 @@ Report:
 ```
 ## Review Loop Complete
 
-### Simplify
-[Summary of simplifications, or "Skipped"]
+### Tidy
+[Summary of changes, or "Skipped"]
 
 ### Build Status
 [Pass / Fail]
@@ -89,5 +89,5 @@ If issues remain:
 ## Notes
 
 - All steps run automatically without user interaction
-- This command never implements new features — it only simplifies, fixes, and reviews
-- Use `--no-simplify` if you've already simplified or just want the review-fix cycle
+- This command never implements new features — it only tidies, fixes, and reviews
+- Use `--no-tidy` if you've already tidied or just want the review-fix cycle

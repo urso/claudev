@@ -162,7 +162,7 @@ Detailed review instructions for each category:
 ## Integration
 
 - Part of `/review-fix` — automated review + fix loop
-- Part of `/review-loop` — simplify, fix, and review-fix cycle
+- Part of `/review-loop` — tidy, fix, and review-fix cycle
 - Part of `/develop-loop` — full development workflow
 - Use before committing to catch issues early
 

@@ -2,7 +2,7 @@
 description: Tidy code for clarity and maintainability while preserving functionality
 user-invocable: true
 disable-model-invocation: true
-argument-hint: "[files] [--story story-file]"
+argument-hint: "[files] [--story story-file] [--review-only]"
 allowed-tools: ["Read", "Write", "Edit", "Glob", "Grep", "Bash(git:*)"]
 model: opus
 ---
@@ -21,8 +21,9 @@ $ARGUMENTS
 ```
 
 Parse for:
-- Specific files to simplify (optional)
+- Specific files to tidy (optional)
 - `--story <story-file>` for context (optional)
+- `--review-only` flag to report issues without modifying files (optional)
 
 ## Pre-computed Context
 
@@ -37,7 +38,7 @@ Parse for:
 
 ## Process
 
-### 1. Determine Files to Simplify
+### 1. Determine Files to Tidy
 
 **If files specified:** Use those files.
 
@@ -48,7 +49,7 @@ Parse for:
 - Skip: Files in `.git/`, `node_modules/`, `vendor/`, `dist/`, `build/`
 - Include: Source code files (`.go`, `.py`, `.js`, `.ts`, `.tsx`, `.rs`, etc.)
 
-If no files to simplify, report and exit.
+If no files to tidy, report and exit.
 
 ### 2. Load Style Rules
 
@@ -62,13 +63,13 @@ If `--story` specified, read the story document to understand:
 - What task is being implemented
 - The intent behind the code
 
-### 4. Analyze and Simplify Each File
+### 4. Analyze and Tidy Each File
 
 For each file, read and look for opportunities to:
 
 **Reduce complexity:**
 - Flatten unnecessary nesting
-- Simplify conditional logic
+- Reduce conditional logic complexity
 - Remove dead code or unused variables
 - Eliminate redundant abstractions that add no value
 - Consolidate related logic that belongs together
@@ -86,18 +87,38 @@ For each file, read and look for opportunities to:
 
 ### 5. Apply Changes
 
-For each simplification:
+**Skip this step if `--review-only` is set.**
+
+For each change:
 1. Verify the change preserves exact functionality
 2. Apply the edit
 3. Move to next opportunity
 
 ### 6. Summary
 
-Report what was simplified:
+**If `--review-only`:** Report findings without applying changes:
 ```
-## Simplification Summary
+## Tidy Review
 
-Simplified N file(s):
+Found N issue(s) in M file(s):
+
+### path/to/file.go
+- Lines 45-52: Nested if statements could be flattened
+- Line 78: Ternary chain could be replaced with switch
+
+### path/to/other.ts
+- Lines 12-20: Duplicate validation logic could be consolidated
+- Line 35: Unused variable
+
+No issues found:
+- path/to/clean.go
+```
+
+**Otherwise:** Report what was tidied:
+```
+## Tidy Summary
+
+Tidied N file(s):
 
 ### path/to/file.go
 - Lines 45-52: Flattened nested if statements
@@ -119,7 +140,7 @@ Never change what the code does - only how it's written. All original features, 
 ### Clarity Over Brevity
 Choose readable, explicit code over compact solutions. Three clear lines are better than one clever line.
 
-### Avoid Over-Simplification
+### Avoid Over-Tidying
 Do NOT:
 - Reduce code clarity or maintainability
 - Create overly clever solutions that are hard to understand
@@ -129,12 +150,12 @@ Do NOT:
 - Make the code harder to debug or extend
 
 ### Minimal Scope
-- Only simplify code in the target files
+- Only tidy code in the target files
 - Do not refactor surrounding code
 - Do not add new features or functionality
 - Do not fix bugs (use `/develop-fix` for that)
 
-## What to Simplify
+## What to Tidy
 
 **Good candidates:**
 - Deeply nested conditionals (3+ levels)
