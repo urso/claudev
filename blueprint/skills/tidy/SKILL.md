@@ -4,7 +4,7 @@ user-invocable: true
 disable-model-invocation: true
 argument-hint: "[files] [--story story-file] [--review-only]"
 allowed-tools: ["Read", "Write", "Edit", "Glob", "Grep", "Bash(git:*)"]
-model: opus
+model: sonnet
 ---
 
 # Tidy Code
