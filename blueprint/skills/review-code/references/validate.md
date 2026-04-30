@@ -34,10 +34,12 @@ You are validating style review findings for false positives.
 
 ## Instructions
 
-For each issue, read the relevant code and determine if it's a TRUE or FALSE positive.
+1. For each unique rule file referenced (e.g., "Rule: common.md - ..."), read that rule file from docs/ai/rules/ to understand the full rule context.
+
+2. For each issue, read the relevant code and determine if it's a TRUE or FALSE positive.
 
 FALSE POSITIVE if:
-- The code actually follows the stated rule when considering context
+- The code actually follows the stated rule when considering full rule context
 - The rule doesn't apply to this code pattern
 - The issue duplicates another in the list
 

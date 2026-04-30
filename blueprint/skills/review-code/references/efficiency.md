@@ -10,17 +10,28 @@ Review code changes for performance inefficiencies — unnecessary allocations, 
 
 ## Process
 
-### Load Efficiency Rules (if any)
+### 1. Identify File Types
+
+From the file list provided to you, note the file extensions (e.g., `.go`, `.ts`, `.py`).
+These determine which rules apply.
+
+### 2. Load Efficiency Rules (if any)
+
+For each file type, run LIST_RULES with the applies-to filter:
 
 ```bash
-bash LIST_RULES "" "" efficiency
+bash LIST_RULES "" "go" efficiency    # for .go files
+bash LIST_RULES "" "ts" efficiency    # for .ts files
+bash LIST_RULES "" "*" efficiency     # universal rules (always load these)
 ```
 
 Output format (pipe-separated): `filename|name|applies-to|tags|paths|description`
 
-Read all applicable efficiency rules (those with `applies-to: ["*"]` or matching file types).
+### 3. Read Rule Content
 
-### Review Categories
+If any rules were found, you MUST read each rule file using the Read tool to get the actual requirements. The LIST_RULES output only shows metadata.
+
+### 4. Review Categories
 
 For each file, read the full file and look for the following categories of issues. For every potential issue, consider whether it actually matters given the context — is this a hot path? Is the data set large or unbounded? Is this called frequently?
 
@@ -51,7 +62,7 @@ For each file, read the full file and look for the following categories of issue
 - Linear search on large or unbounded collections where a map/set would work
 - Using a complex structure where a simpler one fits (and vice versa)
 
-## Report Issues
+## 5. Report Issues
 
 All efficiency issues are reported as `[warning]` — these are suggestions, not bugs.
 

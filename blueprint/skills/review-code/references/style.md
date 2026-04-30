@@ -8,24 +8,42 @@ Review code changes for compliance with project style guides.
 
 ## Process
 
-### Load Style Rules
+### 1. Identify File Types
+
+From the file list provided to you, note the file extensions (e.g., `.go`, `.ts`, `.py`).
+These determine which rules apply.
+
+### 2. Load Style Rules
+
+For each file type, run LIST_RULES with the applies-to filter:
 
 ```bash
-bash LIST_RULES "" "" style
+bash LIST_RULES "" "go" style    # for .go files
+bash LIST_RULES "" "ts" style    # for .ts files
+bash LIST_RULES "" "*" style     # universal rules (always load these)
 ```
 
 Output format (pipe-separated): `filename|name|applies-to|tags|paths|description`
 
-Read all applicable style rules (those with `applies-to: ["*"]` or matching file types).
+### 3. Read Rule Content
 
-### Review Each File
+**Critical:** The LIST_RULES output only shows metadata. You MUST read each applicable rule file using the Read tool to get the actual requirements.
+
+For each rule file path from step 2:
+1. Read the full file content
+2. Note the specific conventions, patterns, and requirements
+3. Use these when reviewing code in step 4
+
+Without reading the rule files, you cannot check compliance.
+
+### 4. Review Each File
 
 For each file:
 1. Read the file content
-2. Check against all applicable style guide rules
+2. Check against all applicable style guide rules (from the rule files you read)
 3. Note any violations
 
-### Report Issues
+### 5. Report Issues
 
 Output format:
 ```
