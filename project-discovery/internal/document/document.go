@@ -13,12 +13,21 @@ import (
 
 var ErrNoFrontmatter = errors.New("no frontmatter found")
 
+// ErrNoPath is returned by Document.Write when called on a document that
+// has no Path set (e.g. one constructed in memory rather than read from disk).
+var ErrNoPath = errors.New("document has no path; use WriteFile")
+
 var separator = []byte("---\n")
 
 // Document represents a markdown file with YAML frontmatter.
+//
+// Path is the source location of the document. ParseDocumentFile sets it;
+// in-memory construction leaves it empty until the caller assigns one.
+// Write uses Path; WriteFile takes an explicit destination.
 type Document[T any] struct {
 	Frontmatter T
 	Body        []byte
+	Path        string
 }
 
 // ParseDocument parses a markdown document with YAML frontmatter into a Document[T].
@@ -38,13 +47,19 @@ func ParseDocument[T any](data []byte) (Document[T], error) {
 }
 
 // ParseDocumentFile reads a file and parses it as a Document[T].
+// The returned document carries Path = path so it can be written back via Write.
 func ParseDocumentFile[T any](path string) (Document[T], error) {
 	data, err := os.ReadFile(path)
 	if err != nil {
 		var zero Document[T]
 		return zero, err
 	}
-	return ParseDocument[T](data)
+	doc, err := ParseDocument[T](data)
+	if err != nil {
+		return doc, err
+	}
+	doc.Path = path
+	return doc, nil
 }
 
 // Bytes serializes the document back to markdown with YAML frontmatter.
@@ -70,6 +85,15 @@ func (d Document[T]) WriteFile(path string) error {
 		return err
 	}
 	return fsutil.AtomicWrite(path, data)
+}
+
+// Write serializes the document and writes it atomically to its own Path.
+// Returns ErrNoPath if the document has no Path set.
+func (d Document[T]) Write() error {
+	if d.Path == "" {
+		return ErrNoPath
+	}
+	return d.WriteFile(d.Path)
 }
 
 // ParseFrontmatterFromFile opens a file and reads only the YAML frontmatter block,

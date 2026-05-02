@@ -53,30 +53,39 @@ type TicketFolder struct {
 // Path returns the absolute path of the tickets/ directory.
 func (t TicketFolder) Path() string { return t.dir }
 
-// Read loads the ticket whose filename matches "<id>-*.md".
-// Returns ErrTicketNotFound if no file matches, or an error if more than one matches.
-func (t TicketFolder) Read(id string) (Document, error) {
-	pattern := filepath.Join(t.dir, id+"-*.md")
-	matches, err := filepath.Glob(pattern)
+// resolve returns the absolute path of the ticket file whose frontmatter
+// id equals id. Frontmatter is authoritative — filenames are only a hint.
+func (t TicketFolder) resolve(id ID) (string, error) {
+	hits, err := findByID(t, id)
 	if err != nil {
-		return Document{}, err
+		return "", err
 	}
-	switch len(matches) {
+	switch len(hits) {
 	case 0:
-		return Document{}, fmt.Errorf("%w: %s", ErrTicketNotFound, id)
+		return "", fmt.Errorf("%w: %s", ErrTicketNotFound, id)
 	case 1:
-		return document.ParseDocumentFile[Ticket](matches[0])
+		return hits[0], nil
 	default:
-		return Document{}, fmt.Errorf("multiple tickets match id %q: %v", id, matches)
+		return "", fmt.Errorf("multiple tickets claim id %s: %v", id, hits)
 	}
 }
 
-// Write serializes doc and writes it atomically to path. The caller is
-// responsible for choosing the path (e.g. "<id>-<slug>.md" inside Path()).
-// Ensures the tickets directory exists.
-func (t TicketFolder) Write(path string, doc Document) error {
-	if err := os.MkdirAll(t.dir, 0755); err != nil {
+// Read loads the ticket with the given id, found via frontmatter lookup.
+// The returned Document carries its source path; mutate and call doc.Write()
+// to persist back. Returns ErrTicketNotFound if no file claims the id.
+func (t TicketFolder) Read(id ID) (Document, error) {
+	path, err := t.resolve(id)
+	if err != nil {
+		return Document{}, err
+	}
+	return document.ParseDocumentFile[Ticket](path)
+}
+
+// Write ensures the tickets directory exists and persists doc to its Path.
+// Returns document.ErrNoPath if doc has no Path set.
+func (t TicketFolder) Write(doc Document) error {
+	if err := os.MkdirAll(t.dir, 0o755); err != nil {
 		return err
 	}
-	return doc.WriteFile(path)
+	return doc.Write()
 }
