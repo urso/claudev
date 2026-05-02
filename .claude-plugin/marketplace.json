@@ -59,6 +59,13 @@
       "category": "productivity"
     },
     {
+      "name": "project-discovery",
+      "source": "./project-discovery",
+      "description": "Intention-driven, iterative onboarding plugin that produces tickets and promoted docs about a project",
+      "keywords": ["onboarding", "discovery", "investigation", "tickets", "docs"],
+      "category": "development"
+    },
+    {
       "name": "claude-notifications-go",
       "source": {
         "source": "github",
