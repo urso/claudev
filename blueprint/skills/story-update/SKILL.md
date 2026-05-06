@@ -35,6 +35,18 @@ Parse for story file path, name, or ID.
 
 Read DISCOVERY_GUIDE for available tools and strategy, then locate the story based on user input. Read the story document.
 
+### 2. Analyze Implementation Changes
+
+If the story has a non-empty `start-git-sha` field, spawn a sub-agent to analyze drift:
+
+**Sub-agent prompt**: "Analyze code changes from `<start-git-sha>` to HEAD against this story's tasks. Run `git diff <start-git-sha>..HEAD` and compare against the task list. Report: (1) tasks that appear complete based on changes, (2) code changes not covered by any task, (3) tasks marked done that seem incomplete. Be concise."
+
+**Sub-agent input**: The story's Tasks section.
+
+If `start-git-sha` is empty, have the sub-agent analyze staged changes (`git diff --cached`) instead.
+
+Present the sub-agent's drift findings to user before proceeding.
+
 ### 2. Check Task Completion
 
 Review each task and sub-task in the story. Based on work done in this session (or the current state of uncommitted changes if context is unclear), flag:

@@ -23,8 +23,15 @@ description: "<ONE-LINE SUMMARY>"
 ## Requirements
 <What the system must do — functional and non-functional>
 
+## Constraints
+- <Testable assertions that must hold — performance limits, security requirements, API contracts, business rules>
+
 ## Technical Approach
 <High-level strategy and architecture>
+
+### Entities
+- **Existing**: <Entities touched by this design>
+- **New**: <New entities introduced>
 
 ## Architecture Decisions
 <Key technical decisions and their rationale>
