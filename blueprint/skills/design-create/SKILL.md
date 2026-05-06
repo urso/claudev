@@ -21,6 +21,7 @@ Create a design document that captures problem context, goals, approach, and tec
 - **DISCOVERY_GUIDE**: `${CLAUDE_PLUGIN_ROOT}/resources/discovery.md`
 - **DESIGN_OPS**: `${CLAUDE_PLUGIN_ROOT}/resources/design-operations.md`
 - **LIST_WORKFLOWS**: `${CLAUDE_PLUGIN_ROOT}/scripts/list-workflows.sh`
+- **LIST_TEMPLATES**: `${CLAUDE_PLUGIN_ROOT}/scripts/list-templates.sh`
 
 ## User Input
 ```
@@ -40,21 +41,19 @@ Read DISCOVERY_GUIDE and DESIGN_OPS for available tools and procedures.
 
 Read the workflow files listed in the pre-computed context above for design guidelines.
 
-### 2. Understand the Problem
+### 2. Select Template
 
-- Parse the user's initial description
-- Search for relevant existing documents or code
-- Identify scope and complexity
+Run `bash LIST_TEMPLATES design` to list available templates. Output format: `name|path|description`.
 
-### 3. Gather Context
+If multiple templates exist, present them to user and ask which to use. If only `default`, use it without asking.
 
-Ask clarifying questions to understand:
-- **Problem**: What problem are we solving? Why now?
-- **Goals**: What does success look like?
-- **Non-goals**: What are we explicitly not doing?
-- **Approach**: What's the high-level strategy?
+Read the selected template.
 
-Get user confirmation before proceeding.
+### 3. Follow Template Instructions
+
+Follow the `agent-instructions` field in the template's frontmatter. Use `<!-- agent: ... -->` comments as per-section guidance.
+
+The template drives the conversation — gathering problem context, goals, requirements, etc.
 
 ### 4. Determine Design Name
 
@@ -74,11 +73,18 @@ Follow the procedures in DESIGN_OPS to create the design. Fill in all sections w
 
 The PostToolUse hook will automatically validate the document after writing.
 
-### 8. Review
+### 8. Clean Up Template Artifacts
+
+Before finalizing the document:
+1. Remove the `agent-instructions` field from frontmatter
+2. Remove all `<!-- agent: ... -->` comments (single-line and multi-line)
+3. Collapse multiple blank lines to one
+
+### 9. Review
 
 Spawn the `design-review` agent to review the newly created design with fresh context. Pass the design file path as the argument.
 
-### 9. Confirm
+### 10. Confirm
 
 - Report creation and review results
 - Suggest next step: `/design-expand` to break into stories

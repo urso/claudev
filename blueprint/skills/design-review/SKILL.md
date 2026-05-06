@@ -20,7 +20,8 @@ Validate a design against guidelines and check for internal consistency.
 ## Variables
 
 - **DISCOVERY_GUIDE**: `${CLAUDE_PLUGIN_ROOT}/resources/discovery.md`
-- **LIST_WORKFLOWS**: `${CLAUDE_PLUGIN_ROOT}/scripts/list-workflows.sh`
+- **LIST_TEMPLATES**: `${CLAUDE_PLUGIN_ROOT}/scripts/list-templates.sh`
+- **DEFAULT_REVIEW**: `${CLAUDE_PLUGIN_ROOT}/templates/designs/default/review.md`
 
 ## User Input
 ```
@@ -28,11 +29,6 @@ $ARGUMENTS
 ```
 
 Parse for design file path, name, or ID.
-
-## Pre-computed Context
-
-### Design Workflows
-!`bash ${CLAUDE_PLUGIN_ROOT}/scripts/list-workflows.sh "" design`
 
 ## Process
 
@@ -48,30 +44,15 @@ bash VALIDATE_DOC design <design-file>
 
 If validation errors, report them immediately.
 
-### 3. Load Design Guidelines
+### 3. Load Review Criteria
 
-Read the workflow files listed in the pre-computed context above for design guidelines.
+1. Read DEFAULT_REVIEW — base criteria for all designs
+2. Check design's `template:` frontmatter field
+3. If template specified, run `bash LIST_TEMPLATES design` to find it, then read its `review.md` (replace `template.md` with `review.md` in path)
 
 ### 4. Review Design
 
-Review the design against the loaded guidelines. Check for:
-
-1. **Guideline compliance**:
-   - Has required sections (Problem Context, Goals, Non-Goals, Requirements, Technical Approach)
-   - Uses concise bullet points, not long paragraphs
-   - Is lean — no task lists or step-by-step implementation details
-   - Has proper frontmatter fields (id, title, status, created, description)
-
-2. **Internal consistency**:
-   - Goals and requirements align
-   - Non-goals don't contradict goals
-   - Technical approach addresses the requirements
-   - No conflicting statements
-
-3. **Clarity**:
-   - Requirements are unambiguous
-   - Approach is concrete enough to derive stories from
-   - No vague language without concrete meaning
+Apply the loaded review criteria. For each checklist item, verify the design passes.
 
 For each issue found, explain:
 - Which section has the issue

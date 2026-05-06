@@ -108,6 +108,27 @@ description: $desc
 EOF
 }
 
+# Create a design template
+# Usage: create_template <name> <description>
+# Example: create_template "migration" "Template for data migrations"
+create_template() {
+    local name="$1" desc="$2"
+    mkdir -p "$FIXTURES/docs/ai/templates/designs/$name"
+    cat > "$FIXTURES/docs/ai/templates/designs/$name/template.md" <<EOF
+---
+id: "<ID>"
+title: "<TITLE>"
+status: draft
+template: $name
+description: "$desc"
+---
+
+# <TITLE>
+
+## Problem Context
+EOF
+}
+
 # Create a workflow file
 # Usage: create_workflow <name> <tags-json> <description>
 # Example: create_workflow "design" '[design]' "Design workflow guidelines"

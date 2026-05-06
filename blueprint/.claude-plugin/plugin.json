@@ -1,6 +1,6 @@
 {
   "name": "blueprint",
-  "version": "0.1.13",
+  "version": "0.2.0",
   "description": "Development workflow plugin with design, story management, style guides, and ad-hoc development support",
   "author": {
     "name": "urso"
