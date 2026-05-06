@@ -3,6 +3,7 @@ id: "<ID>"
 title: "<TITLE>"
 status: ready
 created: <DATE>
+start-git-sha: ""
 blocked-by: []
 description: "<ONE-LINE SUMMARY>"
 ---

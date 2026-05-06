@@ -1,15 +1,14 @@
 # Design Operations
 
-How to create, modify, and manage designs. The template structure is in DESIGN_TEMPLATE within the plugin. Workflow guidelines can be loaded via `bash LIST_WORKFLOWS "" design`.
+How to create, modify, and manage designs. Templates are discovered via `bash LIST_TEMPLATES design`.
 
 ## Variables
 
 - **RESOLVE_DIR**: `${CLAUDE_PLUGIN_ROOT}/scripts/resolve-dir.sh`
-- **DESIGN_TEMPLATE**: `${CLAUDE_PLUGIN_ROOT}/templates/design-template.md`
+- **LIST_TEMPLATES**: `${CLAUDE_PLUGIN_ROOT}/scripts/list-templates.sh`
 - **NEXT_ID**: `${CLAUDE_PLUGIN_ROOT}/scripts/next-id.sh`
 - **SET_STATUS**: `${CLAUDE_PLUGIN_ROOT}/scripts/set-status.sh`
 - **VALIDATE_DOC**: `${CLAUDE_PLUGIN_ROOT}/scripts/validate-doc.sh`
-- **LIST_WORKFLOWS**: `${CLAUDE_PLUGIN_ROOT}/scripts/list-workflows.sh`
 
 ## Resolving the Designs Directory
 
@@ -23,11 +22,13 @@ Always use this resolved path when writing files — never hardcode `docs/ai/des
 ## Creating a Design
 
 1. Generate ID: `bash NEXT_ID design`
-2. Read the template at DESIGN_TEMPLATE
-3. Write to `$DESIGNS_DIR/<id>-<name>.md` using the template, filling in placeholders
-4. Required frontmatter fields: `id`, `title`, `status`, `created`, `description`. Optional: `depends-on` (list of design IDs), `references` (list of project-relative file paths for context)
-5. Required sections: Problem Context, Goals, Non-Goals, Requirements, Technical Approach, Architecture Decisions
-6. Optional sections: Open Questions, References
+2. Select template: `bash LIST_TEMPLATES design` (outputs `name|path|description`)
+3. Read the selected template
+4. Write to `$DESIGNS_DIR/<id>-<name>.md` using the template, filling in placeholders
+5. Required frontmatter fields: `id`, `title`, `status`, `created`, `description`. Optional: `template`, `depends-on` (list of design IDs), `references` (list of project-relative file paths for context)
+6. Required sections: Problem Context, Goals, Non-Goals, Requirements, Constraints, Technical Approach, Architecture Decisions
+7. Optional sections: Open Questions, References
+8. Clean up: Remove `agent-instructions` from frontmatter and `<!-- agent: -->` comments before finalizing
 
 ## Modifying a Design
 

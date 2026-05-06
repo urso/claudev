@@ -28,6 +28,8 @@ The full workflow takes an idea from design through implementation:
 
 
 ```
+/analyze             Explore codebase against requirements (optional)
+       |
 /design-create       Create a design document (problem, goals, approach)
        |
 /design-review       Review design for structure and clarity
@@ -79,6 +81,12 @@ For quick tasks without formal tracking, use `/development` for guidance on impl
 
 ## Skills Reference
 
+### Analysis
+
+| Skill | Description |
+|-------|-------------|
+| `/analyze` | Explore codebase against a design, story, or requirements file — surfaces concepts, risks, gaps |
+
 ### Design
 
 | Skill | Description |
@@ -87,6 +95,7 @@ For quick tasks without formal tracking, use `/development` for guidance on impl
 | `/design-review` | Review a design for structure, clarity, and compliance |
 | `/design-expand` | Break a design into stories with dependency ordering |
 | `/design-update` | Update a design with implementation learnings |
+| `/design-status` | Show design overview with stories, progress, and dependency graph |
 | `/design-archive` | Archive completed designs and their stories |
 
 ### Stories
@@ -118,6 +127,7 @@ For quick tasks without formal tracking, use `/development` for guidance on impl
 
 | Skill | Description |
 |-------|-------------|
+| `/analyze` | Explore codebase against design, story, or requirements — fresh context, no bias |
 | `/style-update` | Add conventions to style guides from review learnings |
 | `/commit-message` | Generate a commit message from staged changes |
 | `/prime` | Load style guides and build config into context |

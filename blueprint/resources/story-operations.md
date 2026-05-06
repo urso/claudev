@@ -27,7 +27,7 @@ Always use this resolved path when writing files — never hardcode `docs/ai/sto
 1. Generate ID: `bash NEXT_ID story`
 2. Read the template at STORY_TEMPLATE
 3. Write to `$STORIES_DIR/<id>-<name>.md` (see naming convention below) using the template, filling in placeholders
-4. Required frontmatter fields: `id`, `title`, `status`, `created`, `blocked-by`, `description`. Optional: `design` (parent design ID)
+4. Required frontmatter fields: `id`, `title`, `status`, `created`, `start-git-sha`, `blocked-by`, `description`. Optional: `design` (parent design ID). The `start-git-sha` is auto-populated when status changes to `in-progress`.
 5. Must have at least one `## Tasks` or `## Phase N:` section with `- [ ]` checkboxes
 6. Must have Developer Logs sections: Decision Log, Blockers Encountered, Deviations from Design, Lessons Learned
 7. Set dependencies: `bash SET_BLOCKED_BY story <id> <blocker-ids...>`

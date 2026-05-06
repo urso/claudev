@@ -17,4 +17,15 @@ if [ $? -ne 0 ]; then
 fi
 
 yq --front-matter=process --inplace ".status = \"$STATUS\"" "$FILE"
+
+# Record commit SHA when transitioning to in-progress
+if [ "$STATUS" = "in-progress" ]; then
+    CURRENT_SHA=$(git rev-parse HEAD 2>/dev/null || echo "")
+    if [ -n "$CURRENT_SHA" ]; then
+        yq --front-matter=process --inplace ".\"start-git-sha\" = \"$CURRENT_SHA\"" "$FILE"
+        echo "Updated $FILE: status=$STATUS, start-git-sha=$CURRENT_SHA"
+        exit 0
+    fi
+fi
+
 echo "Updated $FILE: status=$STATUS"
