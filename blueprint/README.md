@@ -27,13 +27,12 @@ docs/ai/
 The full workflow takes an idea from design through implementation:
 
 ```
-/analyze             Explore codebase against requirements (optional)
-       ↓
 /design-create       Create a design document (problem, goals, approach)
        ↓
     iterate ←────────────────────────────────┐
        ↓                                     │
     discuss & refine design with agent       │
+    use /analyze to explore codebase         │
        ↓                                     │
 /design-review       Review for clarity  ────┘ (repeat until satisfied)
        ↓
@@ -44,12 +43,13 @@ The full workflow takes an idea from design through implementation:
     iterate ←────────────────────────────────┐
        ↓                                     │
     discuss implementation approach          │
+    use /analyze to explore codebase         │
        ↓                                     │
     update story document                    │
        ↓                                     │
     clear context, reload story  ────────────┘ (repeat until satisfied)
        ↓
-/develop-story       Implement selected tasks from a story
+/develop-story       Refine approach, then implement selected tasks
        ↓
 /story-update        Verify story doc is up to date (tasks, logs, status)
        ↓
@@ -58,7 +58,7 @@ The full workflow takes an idea from design through implementation:
 /design-archive      Archive completed designs and stories
 ```
 
-**The key insight:** Both designs and stories are refined through conversation *before* implementation begins. This is how Blueprint handles uncertainty — you iterate on specs via dialogue until the approach is clear, then execute.
+**The key insight:** Both designs and stories are refined through conversation *before* implementation begins. `/develop-story` itself starts with refinement — you iterate on the approach until ready, then trigger implementation. Use `/analyze` at any point to explore the codebase against requirements.
 
 Use `/develop-loop` instead of `/develop-story` when you want to chain implementation, build fix, and review in one go. Prefer `/develop-story` for ambiguous tasks where you want to review the approach before committing to a full cycle.
 
@@ -100,9 +100,16 @@ For smaller work that doesn't need a full design:
 
 ```
 /story-create        Create a standalone story with tasks
-       |
-/develop-story       Implement selected tasks
-       |
+       ↓
+    iterate ←────────────────────────────────┐
+       ↓                                     │
+    discuss & refine story with agent        │
+    use /analyze to explore codebase         │
+       ↓                                     │
+    update story document  ──────────────────┘ (repeat until satisfied)
+       ↓
+/develop-story       Refine approach, then implement selected tasks
+       ↓
 /story-update        Verify story doc is up to date
 ```
 
@@ -143,7 +150,7 @@ For quick tasks without formal tracking, use `/development` for guidance on impl
 
 | Skill | Description |
 |-------|-------------|
-| `/develop-story` | Implement selected tasks from a story |
+| `/develop-story` | Refine approach, then implement selected tasks from a story |
 | `/develop-fix` | Fix build and lint errors |
 | `/tidy` | Tidy code for clarity without changing behavior |
 | `/develop-loop` | Full loop: implement -> fix -> review (orchestrates everything) |
