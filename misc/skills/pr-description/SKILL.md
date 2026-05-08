@@ -70,15 +70,33 @@ From the commits and diff, identify:
 - Concise summary of the branch's purpose
 - Imperative mood ("Add feature" not "Added feature")
 
-**Body (default / concise mode):**
-- A `## Summary` section with 1-3 bullet points covering what changed and why
-- A `## Test plan` section with a brief checklist of how to verify
+**Body:**
 
-**Body (--detailed mode):**
-- A `## Summary` section with a paragraph explaining the motivation and approach
-- A `## Changes` section with grouped bullet points by area/file
-- A `## Test plan` section with a thorough checklist
-- If relevant: `## Breaking changes` or `## Migration notes`
+Choose format based on complexity:
+
+**Simple PRs** — single prose block covering why and what changed.
+
+**Complex PRs** — structured format:
+```
+<Why paragraph — no header, just start writing the motivation/context>
+
+## Changes
+<Summary of what changed>
+
+### Details
+<Breakdown of changes — only if summary isn't enough>
+
+### Attention
+<Tricky, risky, or critical parts for reviewers — only if relevant>
+```
+
+**When to use structured format:**
+- Multiple logical changes
+- Non-obvious decisions or tradeoffs
+- Touches risky/sensitive code
+- Anything that warrants reviewer attention
+
+**If unsure:** Ask the user which format they prefer.
 
 ### 5. Output
 
@@ -93,7 +111,7 @@ From the commits and diff, identify:
 
 ## Guidelines
 
-- **Concise by default**: The summary should help reviewers understand the PR at a glance
+- **Reviewer-focused**: Help reviewers understand intent before reading code
 - **Accurate**: Describe actual changes, not intended changes
-- **Reviewer-focused**: Highlight what a reviewer should pay attention to
+- **No test plan**: User handles testing as part of their workflow
 - **No auto-create**: User decides when to create the PR

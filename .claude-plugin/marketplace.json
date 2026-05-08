@@ -75,6 +75,13 @@
       "license": "GPL-3.0",
       "keywords": ["notifications", "alerts", "productivity", "go", "hooks"],
       "category": "productivity"
+    },
+    {
+      "name": "rtk",
+      "source": "./rtk-plugin",
+      "description": "Token-optimized CLI proxy using RTK (Rust Token Killer) - 60-90% token savings on dev operations",
+      "keywords": ["tokens", "optimization", "cli", "hooks"],
+      "category": "productivity"
     }
   ]
 }

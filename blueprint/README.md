@@ -26,24 +26,39 @@ docs/ai/
 
 The full workflow takes an idea from design through implementation:
 
-
 ```
-/analyze             Explore codebase against requirements (optional)
-       |
 /design-create       Create a design document (problem, goals, approach)
-       |
-/design-review       Review design for structure and clarity
-       |
+       ↓
+    iterate ←────────────────────────────────┐
+       ↓                                     │
+    discuss & refine design with agent       │
+    use /analyze to explore codebase         │
+       ↓                                     │
+/design-review       Review for clarity  ────┘ (repeat until satisfied)
+       ↓
 /design-expand       Break the design into stories with dependencies
-       |
-/develop-story       Implement selected tasks from a story
-       |
+       ↓
+    pick a story
+       ↓
+    iterate ←────────────────────────────────┐
+       ↓                                     │
+    discuss implementation approach          │
+    use /analyze to explore codebase         │
+       ↓                                     │
+    update story document                    │
+       ↓                                     │
+    clear context, reload story  ────────────┘ (repeat until satisfied)
+       ↓
+/develop-story       Refine approach, then implement selected tasks
+       ↓
 /story-update        Verify story doc is up to date (tasks, logs, status)
-       |
+       ↓
 /design-update       Incorporate learnings back into the design
-       |
+       ↓
 /design-archive      Archive completed designs and stories
 ```
+
+**The key insight:** Both designs and stories are refined through conversation *before* implementation begins. `/develop-story` itself starts with refinement — you iterate on the approach until ready, then trigger implementation. Use `/analyze` at any point to explore the codebase against requirements.
 
 Use `/develop-loop` instead of `/develop-story` when you want to chain implementation, build fix, and review in one go. Prefer `/develop-story` for ambiguous tasks where you want to review the approach before committing to a full cycle.
 
@@ -53,8 +68,26 @@ New stories can be added to a design at any time via `/story-create` or `/design
 
 ### Iterative Refinement
 
-When implementation reveals that a story was too ambiguous or the approach is off:
+Specs are living documents. You refine them through conversation:
 
+**Design iteration:**
+1. Create design with `/design-create`
+2. Discuss gaps, edge cases, approach with the agent
+3. Update the design document based on discussion
+4. Run `/design-review` to check structure
+5. Repeat until design feels solid
+
+**Story iteration:**
+1. Pick a story to work on
+2. Discuss implementation details — what's unclear? what's the approach?
+3. Update the story document (tasks, technical notes)
+4. Clear context and reload the story to verify it reads well standalone
+5. Repeat until the story is unambiguous
+6. Only then run `/develop-story`
+
+**Why clear context and reload?** The document should be self-contained. If it only makes sense with conversation history, it's not ready. Reloading tests this.
+
+**When implementation reveals issues:**
 1. Run `/develop-story` (not `/develop-loop`) to implement a subset of tasks
 2. Review what the agent produced
 3. Discuss with the agent to refine the story document
@@ -67,9 +100,16 @@ For smaller work that doesn't need a full design:
 
 ```
 /story-create        Create a standalone story with tasks
-       |
-/develop-story       Implement selected tasks
-       |
+       ↓
+    iterate ←────────────────────────────────┐
+       ↓                                     │
+    discuss & refine story with agent        │
+    use /analyze to explore codebase         │
+       ↓                                     │
+    update story document  ──────────────────┘ (repeat until satisfied)
+       ↓
+/develop-story       Refine approach, then implement selected tasks
+       ↓
 /story-update        Verify story doc is up to date
 ```
 
@@ -110,7 +150,7 @@ For quick tasks without formal tracking, use `/development` for guidance on impl
 
 | Skill | Description |
 |-------|-------------|
-| `/develop-story` | Implement selected tasks from a story |
+| `/develop-story` | Refine approach, then implement selected tasks from a story |
 | `/develop-fix` | Fix build and lint errors |
 | `/tidy` | Tidy code for clarity without changing behavior |
 | `/develop-loop` | Full loop: implement -> fix -> review (orchestrates everything) |

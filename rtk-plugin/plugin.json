@@ -1,0 +1,5 @@
+{
+  "name": "rtk",
+  "description": "Token-optimized CLI proxy using RTK (Rust Token Killer). Rewrites Bash commands to use rtk for 60-90% token savings.",
+  "version": "1.0.0"
+}
