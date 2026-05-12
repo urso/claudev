@@ -25,6 +25,7 @@ Parse for:
 - `--style-only` to run only style review
 - `--bugs-only` to run only bug review
 - `--efficiency-only` to run only efficiency review
+- Branch comparison: "for PR", "PR changes" → compare against main; "against <branch>", "vs <branch>" → compare against that branch
 
 ## Pre-computed Context
 
@@ -39,6 +40,8 @@ Parse for:
 ### 1. Determine Files to Review
 
 **If files specified:** Use those files.
+
+**If branch comparison requested:** Run `git diff <branch>...HEAD --name-only` to get all files changed on this branch.
 
 **If no files specified:** Use the changed files from the pre-computed context above.
 

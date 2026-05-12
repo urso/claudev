@@ -89,13 +89,28 @@ Keep these guidelines in context throughout implementation.
 
 ### 6. Detailed Planning Phase
 
-For each selected task:
-- Create a comprehensive development plan
+#### Targeted Exploration
+- Grep task keywords/concepts in codebase
+- Read files from story's Technical Notes
+- Check similar features for patterns to reuse
+
+#### Plan Development
 - Break down into implementation steps
-- Identify files to modify
 - Consider dependencies and integration points
-- Present the plan to the user for discussion and approval
-- **Do not proceed to implementation until the plan is explicitly approved**
+- Identify files to create, modify, or delete
+- Note risks and reuse opportunities
+
+#### Present Plan
+Produce a single plan covering all selected tasks:
+
+- **Files**: path — create/modify/delete — purpose
+- **Steps**: execution order with rationale
+- **Risks**: anything non-obvious
+- **Reuse**: existing patterns to apply
+
+Flag if plan scope seems larger than tasks warrant.
+
+Wait for explicit approval before implementing.
 
 ### 7. Implementation Phase (after plan approval)
 
