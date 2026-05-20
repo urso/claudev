@@ -17,6 +17,9 @@ type ticketCmd struct {
 	Update      updateCmd      `cmd:"" help:"update a ticket"`
 	Search      searchCmd      `cmd:"" help:"search tickets"`
 	FindOverlap findOverlapCmd `cmd:"" name:"find-overlap" help:"detect overlapping tickets"`
+	Recall      recallCmd      `cmd:"" help:"recall-first search for existing knowledge"`
+	Status      statusCmd      `cmd:"" help:"show ticket status summary"`
+	Next        nextCmd        `cmd:"" help:"suggest next ticket to work on"`
 	Tags        tagsCmd        `cmd:"" help:"list tags"`
 }
 
@@ -211,6 +214,70 @@ func (c findOverlapCmd) Run() error {
 		fmt.Fprintf(tw, "%s\t%.6f\t%s\t%s\n", h.ID, h.Score, h.Status, h.Title)
 	}
 	return tw.Flush()
+}
+
+type recallCmd struct {
+	Intent string   `arg:"" help:"intent to search for"`
+	Scope  string   `help:"scope filter"`
+	Tag    []string `help:"tag filter (repeatable)"`
+}
+
+func (c recallCmd) Run() error {
+	t, err := tickets()
+	if err != nil {
+		return err
+	}
+	result, err := ticket.Recall(t, c.Intent, c.Scope, c.Tag)
+	if err != nil {
+		return err
+	}
+	fmt.Println(result.Type)
+	if len(result.Matches) > 0 {
+		tw := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
+		for _, h := range result.Matches {
+			fmt.Fprintf(tw, "%s\t%.4f\t%s\t%s\n", h.ID, h.Score, h.Status, h.Title)
+		}
+		tw.Flush()
+	}
+	return nil
+}
+
+type statusCmd struct{}
+
+func (statusCmd) Run() error {
+	t, err := tickets()
+	if err != nil {
+		return err
+	}
+	s, err := ticket.Status(t)
+	if err != nil {
+		return err
+	}
+	fmt.Print(ticket.FormatStatus(s))
+	return nil
+}
+
+type nextCmd struct {
+	N int `default:"3" help:"number of suggestions"`
+}
+
+func (c nextCmd) Run() error {
+	t, err := tickets()
+	if err != nil {
+		return err
+	}
+	suggestions, err := ticket.Next(t, c.N)
+	if err != nil {
+		return err
+	}
+	if len(suggestions) == 0 {
+		fmt.Println("No open or active tickets.")
+		return nil
+	}
+	for i, s := range suggestions {
+		fmt.Printf("%d. %s: %s — %s\n", i+1, s.ID, s.Title, s.Reason)
+	}
+	return nil
 }
 
 type tagsCmd struct{}
