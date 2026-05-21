@@ -1,0 +1,6 @@
+{
+  "name": "retro",
+  "version": "0.1.5",
+  "description": "Extract learnings from Claude Code sessions via periodic 'retospective' workflow",
+  "author": { "name": "urso" }
+}

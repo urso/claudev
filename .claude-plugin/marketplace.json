@@ -82,6 +82,13 @@
       "description": "Token-optimized CLI proxy using RTK (Rust Token Killer) - 60-90% token savings on dev operations",
       "keywords": ["tokens", "optimization", "cli", "hooks"],
       "category": "productivity"
+    },
+    {
+      "name": "retro",
+      "source": "./retro",
+      "description": "Extract learnings from Claude Code session history via periodic 'retrospective' workflow",
+      "keywords": ["memory", "learning", "sessions", "sentiment", "self-improvement"],
+      "category": "productivity"
     }
   ]
 }
