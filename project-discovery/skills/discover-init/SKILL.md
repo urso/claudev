@@ -3,7 +3,7 @@ name: discover-init
 description: Initialize project discovery — scan repo, gather intent, create initial tickets
 user-invocable: true
 disable-model-invocation: true
-allowed-tools: [Bash, Read, Write, AskUserQuestion, Skill]
+allowed-tools: [Bash, Read, Write, AskUserQuestion, Agent]
 argument-hint: "[optional initial intent]"
 ---
 
@@ -13,6 +13,7 @@ Initialize the `.discovery/` directory and create initial tickets based on repo 
 
 ## Variables
 
+- **DISCOVER**: `${CLAUDE_PLUGIN_ROOT}/scripts/discover.sh`
 - **DOCNAV_PROBE**: `${CLAUDE_PLUGIN_ROOT}/resources/docnav-probe.md`
 - **SCAN_OUTPUT**: `${CLAUDE_PLUGIN_ROOT}/resources/scan-output.md`
 - **TICKET_TEMPLATE**: `${CLAUDE_PLUGIN_ROOT}/resources/ticket-template.md`
@@ -21,23 +22,26 @@ Initialize the `.discovery/` directory and create initial tickets based on repo 
 
 ### 1. Probe for docnav
 
-Read DOCNAV_PROBE for instructions.
+```bash
+bash "${CLAUDE_PLUGIN_ROOT}/scripts/has-docnav.sh"
+```
 
-Check your available-skills list for `doc-nav`. Report to user:
-- "Docnav detected — Tier 2 search available"
-- "Docnav not detected — using Tier 1 search"
+Report to user:
+- `found` → "Docnav detected — Tier 2 search available"
+- `not found` → "Docnav not detected — using Tier 1 search"
 
-### 2. Run scan
+### 2. Run scan (Sub-agent)
 
-Invoke the `discover-scan` skill via the Skill tool.
+Spawn the scan agent:
+```
+Agent({
+  description: "Run repository scan",
+  subagent_type: "discover-scan",
+  prompt: "Scan this repository and return a summary."
+})
+```
 
-Then read `.discovery/scan.json` and synthesize a 3-5 line summary:
-- Primary languages (by extension count)
-- Repository shape (monorepo indicators, key directories)
-- Top contributors if churn data present
-- Notable markers (build systems, frameworks)
-
-Read SCAN_OUTPUT for jq examples.
+The agent returns a 3-5 line summary. Display it to the user.
 
 ### 3. Gather intent
 
@@ -77,7 +81,7 @@ Ask user to confirm, modify, or reject each.
 For each approved ticket:
 
 ```bash
-discover ticket new --title "<title>" --scope "<scope>" --intention "<intention>" --tag <tags>
+bash "$DISCOVER" ticket new --title "<title>" --scope "<scope>" --intention "<intention>" --tag <tags>
 ```
 
 Report created tickets with their IDs.

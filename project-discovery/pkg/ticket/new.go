@@ -12,14 +12,17 @@ import (
 //
 // Body and Slug are optional. If Slug is empty it is derived from Title.
 // Body is written verbatim; the caller (skill, template, agent) owns its content.
+// ParentSlugs maps parent IDs to their full slugs for Obsidian wikilinks.
 type NewParams struct {
-	Title     string
-	Slug      string
-	Body      []byte
-	Scope     string
-	Tags      []string
-	Parents   []string
-	Intention string
+	Title       string
+	Slug        string
+	Body        []byte
+	Scope       string
+	Tags        []string
+	Parents     []string
+	ParentSlugs map[string]string // id -> full filename slug (e.g. "t-0002" -> "t-0002-nvme-of-target")
+	Refs        []string
+	Intention   string
 }
 
 // DefaultTags are merged into every new ticket so docnav-style filters work
@@ -53,19 +56,49 @@ func New(folder TicketFolder, p NewParams) (Document, error) {
 
 func build(id ID, p NewParams, now time.Time) Document {
 	date := now.Format("2006-01-02")
+	ticketType := "discovery-ticket"
+	if len(p.Refs) > 0 {
+		ticketType = "doc-reference"
+	}
 	t := Ticket{
 		Title:     p.Title,
-		Type:      "discovery-ticket",
+		Type:      ticketType,
 		Tags:      mergeTags(DefaultTags, p.Tags),
 		Scope:     p.Scope,
 		ID:        id.String(),
 		Status:    StatusOpen,
 		Parents:   p.Parents,
+		Refs:      p.Refs,
 		Intention: p.Intention,
 		Created:   date,
 		Updated:   date,
 	}
-	return Document{Frontmatter: t, Body: p.Body}
+	body := p.Body
+	if len(p.Parents) > 0 {
+		body = appendRelations(body, p.Parents, p.ParentSlugs)
+	}
+	return Document{Frontmatter: t, Body: body}
+}
+
+// appendRelations adds a Relations section with wikilinks for Obsidian graph.
+func appendRelations(body []byte, parents []string, slugs map[string]string) []byte {
+	var b strings.Builder
+	if len(body) > 0 {
+		b.Write(body)
+		if body[len(body)-1] != '\n' {
+			b.WriteByte('\n')
+		}
+		b.WriteByte('\n')
+	}
+	b.WriteString("## Relations\n\n")
+	for _, p := range parents {
+		link := p
+		if slug, ok := slugs[p]; ok {
+			link = slug
+		}
+		fmt.Fprintf(&b, "- Parent: [[%s]]\n", link)
+	}
+	return []byte(b.String())
 }
 
 func mergeTags(base, extra []string) []string {

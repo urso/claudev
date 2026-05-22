@@ -18,6 +18,12 @@ type RepoSignals struct {
 	Extensions []ExtCount `json:"extensions" jsonschema:"description=top N file extensions by count (capped by --top-ext, default 25)"`
 	TopDirs    []DirCount `json:"top_dirs" jsonschema:"description=top-level directory inventory with file counts; '(root)' bucket = files directly in repo root; sorted by count desc"`
 	Markers    []string   `json:"markers" jsonschema:"description=presence list of well-known marker files/dirs at repo root; dirs end with '/'; use to infer build system / ecosystem"`
+	Artifacts  []Artifact `json:"artifacts" jsonschema:"description=discovered documentation, config, and operational artifacts found recursively"`
+}
+
+type Artifact struct {
+	Type string `json:"type" jsonschema:"description=artifact category: docs, readme, helm, k8s, playbook, scripts, ci"`
+	Path string `json:"path" jsonschema:"description=relative path from repo root"`
 }
 
 type ExtCount struct {
@@ -75,6 +81,35 @@ var dirMarkers = []string{
 	"terraform",
 }
 
+// artifactDirs maps directory basenames to artifact types (searched recursively).
+var artifactDirs = map[string]string{
+	"docs":          "docs",
+	"doc":           "docs",
+	"documentation": "docs",
+	"helm":          "helm",
+	"charts":        "helm",
+	"k8s":           "k8s",
+	"kubernetes":    "k8s",
+	"manifests":     "k8s",
+	"playbooks":     "playbook",
+	"runbooks":      "playbook",
+	"scripts":       "scripts",
+	"tools":         "scripts",
+	"bin":           "scripts",
+}
+
+// artifactFiles maps file basenames (case-insensitive) to artifact types.
+var artifactFiles = map[string]string{
+	"readme.md":       "readme",
+	"readme":          "readme",
+	"readme.txt":      "readme",
+	"architecture.md": "docs",
+	"contributing.md": "docs",
+	"changelog.md":    "docs",
+	"jenkinsfile":     "ci",
+	".gitlab-ci.yml":  "ci",
+}
+
 // Repo walks root once and returns raw signals.
 func Repo(root string, opts RepoOptions) (RepoSignals, error) {
 	if opts.TopExtensions <= 0 {
@@ -88,14 +123,30 @@ func Repo(root string, opts RepoOptions) (RepoSignals, error) {
 	extCounts := map[string]int{}
 	dirCounts := map[string]int{}
 	fileCount := 0
+	var artifacts []Artifact
+	seenArtifactDirs := map[string]struct{}{}
 
-	for rel, werr := range walkFiles(abs) {
+	for entry, werr := range walkFilesAndDirs(abs) {
 		if werr != nil {
 			return RepoSignals{}, werr
 		}
+		if entry.D.IsDir() {
+			baseLower := strings.ToLower(entry.D.Name())
+			if atype, ok := artifactDirs[baseLower]; ok {
+				if _, seen := seenArtifactDirs[entry.Rel]; !seen {
+					seenArtifactDirs[entry.Rel] = struct{}{}
+					artifacts = append(artifacts, Artifact{Type: atype, Path: entry.Rel})
+				}
+			}
+			continue
+		}
 		fileCount++
-		extCounts[extOf(rel)]++
-		dirCounts[topDirOfPath(rel)]++
+		extCounts[extOf(entry.Rel)]++
+		dirCounts[topDirOfPath(entry.Rel)]++
+		baseLower := strings.ToLower(filepath.Base(entry.Rel))
+		if atype, ok := artifactFiles[baseLower]; ok {
+			artifacts = append(artifacts, Artifact{Type: atype, Path: entry.Rel})
+		}
 	}
 
 	exts := make([]ExtCount, 0, len(extCounts))
@@ -125,16 +176,22 @@ func Repo(root string, opts RepoOptions) (RepoSignals, error) {
 		Extensions: exts,
 		TopDirs:    dirs,
 		Markers:    markers,
+		Artifacts:  artifacts,
 	}, nil
 }
 
-// walkFiles yields each non-ignored file under root as a relative path.
-// On error, yields ("", err) once and stops. Pruned subtrees use fs.SkipDir.
-func walkFiles(root string) iter.Seq2[string, error] {
-	return func(yield func(string, error) bool) {
+type walkEntry struct {
+	Rel string
+	D   fs.DirEntry
+}
+
+// walkFilesAndDirs yields each non-ignored file/dir under root as (entry, error).
+// On error, yields (walkEntry{}, err) once and stops. Pruned subtrees use fs.SkipDir.
+func walkFilesAndDirs(root string) iter.Seq2[walkEntry, error] {
+	return func(yield func(walkEntry, error) bool) {
 		_ = filepath.WalkDir(root, func(path string, d fs.DirEntry, err error) error {
 			if err != nil {
-				if !yield("", err) {
+				if !yield(walkEntry{}, err) {
 					return filepath.SkipAll
 				}
 				return err
@@ -145,13 +202,15 @@ func walkFiles(root string) iter.Seq2[string, error] {
 						return fs.SkipDir
 					}
 				}
-				return nil
 			}
 			rel, rerr := filepath.Rel(root, path)
 			if rerr != nil {
 				return nil
 			}
-			if !yield(rel, nil) {
+			if path == root {
+				return nil
+			}
+			if !yield(walkEntry{Rel: rel, D: d}, nil) {
 				return filepath.SkipAll
 			}
 			return nil

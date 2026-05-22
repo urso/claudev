@@ -17,6 +17,7 @@ type Ticket struct {
 	Status    string   `yaml:"status"`
 	Parents   []string `yaml:"parents,omitempty"`
 	Related   []string `yaml:"related,omitempty"`
+	Refs      []string `yaml:"refs,omitempty"`
 	Intention string   `yaml:"intention,omitempty"`
 	Created   string   `yaml:"created"`
 	Updated   string   `yaml:"updated,omitempty"`

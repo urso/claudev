@@ -21,6 +21,7 @@ type ticketCmd struct {
 	Status      statusCmd      `cmd:"" help:"show ticket status summary"`
 	Next        nextCmd        `cmd:"" help:"suggest next ticket to work on"`
 	Tags        tagsCmd        `cmd:"" help:"list tags"`
+	Children    childrenCmd    `cmd:"" help:"list child tickets of a parent"`
 }
 
 func tickets() (ticket.TicketFolder, error) {
@@ -52,6 +53,7 @@ type newCmd struct {
 	Scope     string   `help:"one-line scope"`
 	Tag       []string `help:"tag (repeatable)"`
 	Parent    []string `help:"parent ticket id (repeatable)"`
+	Ref       []string `help:"external doc reference (repeatable); sets type to doc-reference"`
 	Intention string   `help:"why this ticket exists"`
 	Body      string   `help:"body content; use '-' to read from stdin"`
 }
@@ -72,14 +74,34 @@ func (c newCmd) Run() error {
 	default:
 		body = []byte(c.Body)
 	}
+
+	// Look up parent slugs for Obsidian wikilinks
+	parentSlugs := make(map[string]string)
+	for _, p := range c.Parent {
+		id, err := ticket.ParseID(p)
+		if err != nil {
+			continue
+		}
+		if doc, err := t.Read(id); err == nil {
+			// Extract filename without .md extension
+			base := doc.Path[len(t.Path())+1:]
+			if len(base) > 3 && base[len(base)-3:] == ".md" {
+				base = base[:len(base)-3]
+			}
+			parentSlugs[p] = base
+		}
+	}
+
 	doc, err := ticket.New(t, ticket.NewParams{
-		Title:     c.Title,
-		Slug:      c.Slug,
-		Body:      body,
-		Scope:     c.Scope,
-		Tags:      c.Tag,
-		Parents:   c.Parent,
-		Intention: c.Intention,
+		Title:       c.Title,
+		Slug:        c.Slug,
+		Body:        body,
+		Scope:       c.Scope,
+		Tags:        c.Tag,
+		Parents:     c.Parent,
+		ParentSlugs: parentSlugs,
+		Refs:        c.Ref,
+		Intention:   c.Intention,
 	})
 	if err != nil {
 		return err
@@ -294,6 +316,34 @@ func (tagsCmd) Run() error {
 	tw := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
 	for _, r := range rows {
 		fmt.Fprintf(tw, "%s\t%d\n", r.Tag, r.Count)
+	}
+	return tw.Flush()
+}
+
+type childrenCmd struct {
+	ID string `arg:"" help:"parent ticket id (e.g. t-0001 or 1)"`
+}
+
+func (c childrenCmd) Run() error {
+	t, err := tickets()
+	if err != nil {
+		return err
+	}
+	parentID, err := ticket.ParseID(c.ID)
+	if err != nil {
+		return err
+	}
+	rows, err := ticket.Children(t, parentID.String())
+	if err != nil {
+		return err
+	}
+	if len(rows) == 0 {
+		fmt.Println("No children.")
+		return nil
+	}
+	tw := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
+	for _, r := range rows {
+		fmt.Fprintf(tw, "%s\t%s\t%s\n", r.ID, r.Status, r.Title)
 	}
 	return tw.Flush()
 }

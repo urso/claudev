@@ -1,6 +1,6 @@
 {
   "name": "project-discovery",
-  "version": "0.1.0",
+  "version": "0.3.2",
   "description": "Intention-driven, iterative onboarding plugin that produces tickets and promoted docs about a project",
   "author": {
     "name": "urso"

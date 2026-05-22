@@ -12,13 +12,14 @@ Run `bash "$DISCOVER" help <cmd>` for full details.
 bash "$DISCOVER" ticket recall "<intent>"     # recall-first search
 bash "$DISCOVER" ticket status                # summary: counts + active/open lists
 bash "$DISCOVER" ticket next [--n 3]          # suggest next ticket to work on
-bash "$DISCOVER" ticket new --title "..." --intention "..." [--scope "..."] [--tag X] [--parent t-NNNN]
+bash "$DISCOVER" ticket new --title "..." --intention "..." [--scope "..."] [--tag X] [--parent t-NNNN] [--ref path/to/doc.md]
 bash "$DISCOVER" ticket list [--status X] [--tag X]
 bash "$DISCOVER" ticket get <id>
 bash "$DISCOVER" ticket update <id> --status X --log "reason"
 bash "$DISCOVER" ticket search "<query>" [--tag X] [--scope "..."]
 bash "$DISCOVER" ticket find-overlap --intent "..."
 bash "$DISCOVER" ticket tags
+bash "$DISCOVER" ticket children <id>    # list child tickets of a parent
 ```
 
 ## Scan Operations

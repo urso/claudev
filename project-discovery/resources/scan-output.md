@@ -15,6 +15,21 @@ Structural signals from `discover scan repo`:
 - `extensions`: array of `{ext, count}` sorted by count descending
 - `top_dirs`: array of `{dir, files}` for top-level directories
 - `markers`: array of marker filenames found (Makefile, go.mod, package.json, etc.)
+- `artifacts`: array of `{type, path}` for discovered documentation and operational artifacts
+
+### artifacts
+
+Artifact types found recursively (supports monorepos):
+
+| Type | Detected From |
+|------|---------------|
+| `docs` | docs/, doc/, documentation/, ARCHITECTURE.md, CONTRIBUTING.md, CHANGELOG.md |
+| `readme` | README.md, README, README.txt (at any depth) |
+| `helm` | helm/, charts/ |
+| `k8s` | k8s/, kubernetes/, manifests/ |
+| `playbook` | playbooks/, runbooks/ |
+| `scripts` | scripts/, tools/, bin/ |
+| `ci` | Jenkinsfile, .gitlab-ci.yml |
 
 ### churn
 
@@ -45,4 +60,14 @@ jq '.churn.by_author | sort_by(-.lines) | .[:5]' .discovery/scan.json
 Directory with most files:
 ```bash
 jq '.repo.top_dirs[0]' .discovery/scan.json
+```
+
+All documentation artifacts:
+```bash
+jq '.repo.artifacts | map(select(.type == "docs" or .type == "readme"))' .discovery/scan.json
+```
+
+Helm charts and k8s manifests:
+```bash
+jq '.repo.artifacts | map(select(.type == "helm" or .type == "k8s"))' .discovery/scan.json
 ```
