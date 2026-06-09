@@ -13,11 +13,22 @@ description: "<ONE-LINE SUMMARY>"
 ## Tasks
 
 ### Task 1: <Task Name>
+
+#### Acceptance Criteria
+- [ ] <Verifiable outcome 1>
+- [ ] <Verifiable outcome 2>
+
+#### Subtasks
 - [ ] <Sub-task 1>
 - [ ] <Sub-task 2>
 - [ ] <Sub-task 3>
 
 ### Task 2: <Task Name>
+
+#### Acceptance Criteria
+- [ ] <Verifiable outcome>
+
+#### Subtasks
 - [ ] <Sub-task 1>
 - [ ] <Sub-task 2>
 

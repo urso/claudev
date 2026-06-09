@@ -34,6 +34,29 @@ description: Guidelines for writing actionable story documents.
 - Put checkboxes outside of Tasks/Phase sections
 - Leave developer log sections as placeholders when marking status as `done`
 
+## Acceptance Criteria
+
+Each task should have an `#### Acceptance Criteria` section with verifiable outcomes, separate from subtasks.
+
+### Writing Good Criteria
+
+- **Code-based** — criteria should be verifiable by looking at the code ("interface X exists", "function handles error case Y")
+- **Specific** — name files, types, functions, or behaviors ("has `Process(ctx, input) (output, error)` signature")
+- **Testable assertions** — if tests are needed, describe what they verify ("unit test covers context cancellation")
+- **Outcome-focused** — describe the end state, not the work steps
+
+### What NOT to Include
+
+- "Pass CI" — tests run automatically, this adds no value
+- Vague criteria — "works correctly", "handles edge cases"
+- Process steps — "write tests", "add docs" (those are subtasks)
+- Redundant checks — if CI already enforces it, don't list it
+
+### Who Marks Criteria Done
+
+- **Subtasks**: marked by the development agent as work completes
+- **Acceptance Criteria**: marked by the review process after verification — development agents must NOT mark these
+
 ## Structure Options
 
 Choose based on complexity:

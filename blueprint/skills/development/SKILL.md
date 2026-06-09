@@ -153,7 +153,8 @@ This orchestrates:
 - **Task selection**: Only work on selected tasks, never touch others
 - **Planning first**: Always create and approve a plan before implementing
 - **Style compliance**: Follow all loaded style guide rules
-- **Update story**: Mark tasks complete immediately, update developer logs
+- **Update story**: Mark subtasks complete as work progresses, update developer logs
+- **Acceptance criteria**: NEVER mark acceptance criteria checkboxes — these are verified and marked by the review process only
 - **Stay collaborative**: Confirm major changes with user
 
 **Ad-Hoc Development:**

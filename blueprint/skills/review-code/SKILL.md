@@ -54,7 +54,9 @@ If no code files to review, report that and exit.
 
 ### 2. Load Story Context (if provided)
 
-If `--story` specified, read the story document for implementation context.
+If `--story` specified, read the story document for:
+- Implementation context for other review agents
+- Acceptance criteria from the tasks (for the acceptance criteria sub-agent)
 
 ### 3. Spawn Review Sub-agents
 
@@ -98,6 +100,32 @@ Story context: [if provided]
 Follow the instructions to review each file and report issues.
 ```
 
+**Test review** (skip if `--style-only` or `--bugs-only` or `--efficiency-only`, only if test files in file list):
+```
+Task: Run test review
+Model: sonnet
+
+Read the test review instructions from references/tests.md.
+Review these test files: [test files from file list]
+Story context: [if provided]
+
+Follow the instructions to review test quality and report issues.
+```
+
+**Acceptance criteria review** (only if `--story` provided, skip if any `--*-only` flag):
+```
+Task: Verify acceptance criteria
+Model: sonnet
+
+Read the acceptance criteria instructions from references/acceptance.md.
+Review these files: [file list]
+
+Acceptance criteria to verify:
+[extracted criteria from story tasks]
+
+Follow the instructions to verify each criterion and report pass/fail.
+```
+
 ### 4. Collect and Merge Results
 
 Wait for all agents to complete, then merge findings grouped by severity:
@@ -105,6 +133,8 @@ Wait for all agents to complete, then merge findings grouped by severity:
 - **Bug warnings**: Bug review [warning] items
 - **Style warnings**: Style review [warning] items
 - **Efficiency warnings**: Efficiency review [warning] items
+- **Test warnings**: Test review [warning] items (if test files reviewed)
+- **Acceptance criteria**: [pass]/[fail]/[unclear] items (if story provided)
 
 ### 5. Validate for False Positives
 
@@ -112,22 +142,34 @@ If issues were found, read `references/validate.md` for validation instructions.
 
 ### 6. Present Combined Report
 
+Assign typed IDs to each finding for easy reference in follow-up discussion:
+- **B1, B2, ...** — Bug findings (both errors and warnings)
+- **S1, S2, ...** — Style issues
+- **E1, E2, ...** — Efficiency issues
+- **T1, T2, ...** — Test issues
+- **A1, A2, ...** — Acceptance criteria (pass/fail/unclear)
+
 ```
 ## Code Review Summary
 
 Reviewed X files (validated for false positives).
 
-### Critical Bugs (N)
-[validated error-level bug issues]
+### Critical Bugs
+B1. [error] path/to/file.ext:LINE — Description
+B2. [error] ...
 
-### Bug Warnings (N)
-[validated warning-level bug issues]
+### Bug Warnings
+B3. [warning] path/to/file.ext:LINE — Description
 
-### Style Issues (N)
-[validated style issues]
+### Style Issues
+S1. path/to/file.ext:LINE — Description
+S2. ...
 
-### Efficiency Issues (N)
-[validated efficiency issues]
+### Efficiency Issues
+E1. path/to/file.ext:LINE — Description
+
+### Test Issues
+T1. path/to/file_test.ext:LINE — Description
 
 ### Clean Files
 [files with no confirmed issues]
@@ -137,7 +179,29 @@ Initial findings: X issues
 After validation: Y confirmed issues (Z filtered as false positives)
 ```
 
-### 7. Propose Style Guide Additions (if issues found)
+Users can reference findings by ID: "fix B3", "ignore S1-S3", "explain E2".
+
+### 7. Report Acceptance Criteria (if story provided)
+
+Include acceptance criteria results in the report with IDs:
+
+```
+### Acceptance Criteria
+
+#### Task 1: <Name>
+A1. [x] `Processor` interface exists in `pkg/core/processor.go` — found at line 42
+A2. [ ] Has `Process(ctx, input) (output, error)` signature — FAIL: signature is `Process(input) error`
+A3. [x] Unit test covers happy path — `processor_test.go:TestProcess`
+
+#### Task 2: <Name>
+A4. [x] ... — evidence
+```
+
+**After reporting**, update the story file:
+- Mark passing criteria as `[x]`
+- Leave failing criteria as `[ ]` with a comment explaining what's missing
+
+### 8. Propose Style Guide Additions (if issues found)
 
 If validated issues reveal recurring patterns not yet documented in style guides, propose additions:
 
@@ -160,6 +224,8 @@ Detailed review instructions for each category:
 - **`references/style.md`** — Style guide compliance checks, output format, review standards
 - **`references/bugs.md`** — Bug/logic/security review categories, severity levels
 - **`references/efficiency.md`** — Performance review categories, context-dependent filtering
+- **`references/tests.md`** — Test code quality, coverage, maintainability
+- **`references/acceptance.md`** — Acceptance criteria verification from story tasks
 - **`references/validate.md`** — False positive validation with tiered model sub-agents
 
 ## Integration
