@@ -48,6 +48,7 @@ Parse for:
 **Filter out non-code files:**
 - Skip: `*.md`, `*.json`, `*.yaml`, `*.yml`, `*.txt`, `*.lock`
 - Skip: Files in `.git/`, `node_modules/`, `vendor/`, `dist/`, `build/`
+- Skip: Generated files — `*.gen.*`, `*_gen.*`, `*.pb.go`, `*.pb.ts`, `*_generated.*`, `*.generated.*`, files with `// Code generated` or `# Generated` header comments
 - Include: Source code files
 
 If no code files to review, report that and exit.
