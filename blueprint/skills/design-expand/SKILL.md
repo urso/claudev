@@ -105,7 +105,7 @@ bash SET_STATUS design <design-id> in-progress
 
 ### 9. Review Stories
 
-Spawn `story-review` agents in parallel for each created story file. Pass the story file path as the argument to each agent.
+Spawn `story-reviewer` agents in parallel for each created story file. Pass the story file path as the argument to each agent.
 
 ### 10. Summary
 
