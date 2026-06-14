@@ -82,7 +82,7 @@ Before finalizing the document:
 
 ### 9. Review
 
-Spawn the `design-review` agent to review the newly created design with fresh context. Pass the design file path as the argument.
+Spawn the `design-reviewer` agent to review the newly created design with fresh context. Pass the design file path as the argument.
 
 ### 10. Confirm
 
