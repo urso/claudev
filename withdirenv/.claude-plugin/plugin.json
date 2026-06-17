@@ -1,0 +1,5 @@
+{
+  "name": "withdirenv",
+  "description": "Automatically load direnv environment into Claude Code sessions",
+  "version": "0.1.0"
+}
