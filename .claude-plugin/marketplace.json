@@ -89,6 +89,13 @@
       "description": "Extract learnings from Claude Code session history via periodic 'retrospective' workflow",
       "keywords": ["memory", "learning", "sessions", "sentiment", "self-improvement"],
       "category": "productivity"
+    },
+    {
+      "name": "withdirenv",
+      "source": "./withdirenv",
+      "description": "Automatically load direnv environment into Claude Code sessions",
+      "keywords": ["direnv", "environment", "hooks", "shell"],
+      "category": "productivity"
     }
   ]
 }

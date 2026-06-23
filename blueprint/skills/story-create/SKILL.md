@@ -64,22 +64,34 @@ Read the workflow files listed in the pre-computed context above for story guide
 
 Ask clarifying questions:
 - **What**: What work does this story cover?
-- **Tasks**: What are the concrete tasks and sub-tasks?
+- **Acceptance Criteria**: What must be true when done? Name types, signatures, behaviors. (e.g., "`AuthMiddleware` type exists with `Wrap(http.Handler) http.Handler` method")
+- **Subtasks**: What specific work steps? Name files, functions, operations. (e.g., "Define `AuthMiddleware` struct in `pkg/auth/middleware.go`")
 - **Dependencies**: Does this story depend on other stories?
 
 Get user confirmation before proceeding.
 
-### 4. Determine Story Name
+### 4. Capture Technical Context
+
+Scan the conversation for code blocks, API signatures, and technical decisions discussed.
+
+**If technical content found:**
+- Show the user what was found
+- Ask which items should go in Technical Notes
+- Include selected content in the story document
+
+**If nothing found:** Skip to next step.
+
+### 5. Determine Story Name
 
 Ask user for a short kebab-case name (e.g., `auth-middleware`, `test-suite`).
 
-### 5. Create Story
+### 6. Create Story
 
 Follow the procedures in STORY_OPS to create the story:
 - Generate ID, write the document, set dependencies
 - Link to design if applicable
 
-### 6. Confirm
+### 7. Confirm
 
 - Report successful creation
 - Suggest next steps: `/develop-story` to start implementation
