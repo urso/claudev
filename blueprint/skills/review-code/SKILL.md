@@ -61,7 +61,7 @@ If `--story` specified, read the story document for:
 
 ### 3. Spawn Review Sub-agents
 
-Read the relevant reference files for review instructions, then spawn sub-agents in parallel. Each agent receives the review instructions from the reference file, the file list, and story context if provided.
+Spawn sub-agents in parallel. Each sub-agent reads its reference file directly — do NOT read the reference files yourself or paraphrase them into the prompt. The reference files contain detailed format instructions that must be followed exactly.
 
 Unless a `--*-only` flag limits the scope, spawn all applicable agents.
 
@@ -150,27 +150,56 @@ Assign typed IDs to each finding for easy reference in follow-up discussion:
 - **T1, T2, ...** — Test issues
 - **A1, A2, ...** — Acceptance criteria (pass/fail/unclear)
 
+**Preserve detail for complex findings.** Sub-agents produce rich output for bugs, efficiency, and test coverage gaps. Include that detail in the report — don't flatten to one-liners. The goal is for the author to verify the reviewer understood the code.
+
 ```
 ## Code Review Summary
 
 Reviewed X files (validated for false positives).
 
 ### Critical Bugs
-B1. [error] path/to/file.ext:LINE — Description
-B2. [error] ...
+
+#### B1. [error] <short title>
+
+**What this code does:** ...
+**Before:** ... (if regression)
+**After:** ...
+**Trigger:** t0 → t1 → t2 → failure
+**Severity:** critical/major/minor — merge-blocking? why?
+**Fix:** ...
+
+#### B2. [error] ...
 
 ### Bug Warnings
-B3. [warning] path/to/file.ext:LINE — Description
+
+#### B3. [warning] path/to/file.ext:LINE
+**Bug:** ...
+**Context:** ...
+**Impact:** ...
+**Fix:** ...
 
 ### Style Issues
 S1. path/to/file.ext:LINE — Description
 S2. ...
 
 ### Efficiency Issues
-E1. path/to/file.ext:LINE — Description
+
+#### E1. [warning] path/to/file.ext:LINE
+**Issue:** ...
+**Context:** ...
+**Impact:** ...
+**Severity:** ...
+**Fix:** ...
 
 ### Test Issues
-T1. path/to/file_test.ext:LINE — Description
+
+#### T1. [warning] path/to/file_test.ext:LINE
+**Claims to test:** ...
+**Actually tests:** ...
+**Gap:** ...
+**Fix:** ...
+
+(Use terse format for mechanical test issues: `T2. path:LINE — Description`)
 
 ### Clean Files
 [files with no confirmed issues]
