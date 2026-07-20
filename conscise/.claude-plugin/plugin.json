@@ -1,9 +1,10 @@
 {
   "name": "conscise",
-  "version": "0.1.3",
-  "description": "Concise communication mode - short sentences, no filler, auto-enabled on session start",
+  "version": "0.2.0",
+  "description": "Concise communication output style — short sentences, one thought per line, no filler",
   "author": {
     "name": "urso",
     "email": "steffen@xata.io"
-  }
+  },
+  "keywords": ["output-style", "concise", "communication", "productivity"]
 }

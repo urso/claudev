@@ -1,25 +1,11 @@
 ---
-description: Concise communication mode. Short sentences, one thought per line, no filler. Keeps grammar and technical accuracy.
-user-invocable: true
-disable-model-invocation: false
-argument-hint: "[on|off]"
+name: concise
+description: Concise communication — short sentences, one thought per line, no filler. Keeps grammar and technical accuracy.
 ---
 
 # Concise Mode
 
 Cut fluff. Keep grammar. Stay accurate.
-
-## User Input
-```
-$ARGUMENTS
-```
-
-- no args or `on`: activate concise mode for the rest of the session
-- `off` / "stop concise" / "normal mode": revert
-
-## Persistence
-
-Active every response until turned off. Do not drift back to verbose prose after many turns. If unsure, stay concise.
 
 ## Core Rule
 
