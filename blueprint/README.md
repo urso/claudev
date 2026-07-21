@@ -115,6 +115,26 @@ For smaller work that doesn't need a full design:
 
 
 
+### Worktree Focus
+
+When working in git worktrees, use `/focus` and `/work` to avoid re-specifying the design or story each session:
+
+```
+/focus design dreams   Set focus to a design (or search/explore interactively)
+       ↓
+/work                  Pick an actionable story, start development
+       ↓
+    (new session)
+       ↓
+/work                  Continues the same story automatically
+       ↓
+    (story done)
+       ↓
+/work                  Active story cleared, pick the next one
+```
+
+Focus persists in `.claude-focus` at the git root. Each worktree has independent focus.
+
 ### Ad-Hoc Development
 
 For quick tasks without formal tracking, use `/development` for guidance on implementing directly with style guide compliance.
@@ -145,6 +165,13 @@ For quick tasks without formal tracking, use `/development` for guidance on impl
 | `/story-create` | Create a story (standalone or linked to a design) |
 | `/story-review` | Validate story structure and task quality |
 | `/story-update` | Verify and update a story — tasks marked, logs filled in, status correct |
+
+### Worktree Focus
+
+| Skill | Description |
+|-------|-------------|
+| `/focus` | Set worktree focus to a design or story — persists across sessions |
+| `/work` | Continue development on the focused design or story |
 
 ### Implementation
 
