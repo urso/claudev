@@ -92,7 +92,7 @@ teardown() {
     [[ "$output" == *"Chunk 1"* ]]
 }
 
-@test "diff-files: skips deleted files" {
+@test "diff-files: includes deleted files" {
     echo "content" > file.go
     git add file.go
     git commit -m "add" -q
@@ -103,7 +103,7 @@ teardown() {
 
     run "$SCRIPTS_DIR/diff-files.sh" main
     [ "$status" -eq 0 ]
-    [[ "$output" == "No changed files" ]]
+    [[ "$output" == *"file.go"* ]]
 }
 
 @test "diff-files: handles nested directories" {
