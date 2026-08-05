@@ -1,5 +1,5 @@
 ---
-description: Review all code changes on the current branch vs base. Detects PR and uses correct base branch.
+description: Review all code and config changes on the current branch vs base. Detects PR and uses correct base branch.
 user-invocable: true
 disable-model-invocation: true
 argument-hint: "[--story story-file] [--style-only] [--bugs-only] [--efficiency-only]"

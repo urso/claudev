@@ -1,5 +1,5 @@
 ---
-description: Review code for style compliance, bugs, and efficiency. Use for staged/unstaged changes or specific files.
+description: Review code and config for style compliance, bugs, and efficiency. Covers Helm charts, k8s manifests, and CI workflows. Use for staged/unstaged changes or specific files.
 user-invocable: true
 disable-model-invocation: false
 argument-hint: "[files] [--story story-file] [--style-only] [--bugs-only] [--efficiency-only]"

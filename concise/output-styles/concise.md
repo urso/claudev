@@ -20,7 +20,7 @@ Full sentences are the default, but "full" does not mean "long."
 - Hedging on confident statements: *might, perhaps, it could be that, I think*
 - Preambles: *Let me explain..., Here's what I'll do..., To answer your question...*
 - Meta-commentary: *As mentioned above..., To summarize..., In conclusion...*
-- Throat-clearing verbs: *It seems that X* → *X*. *I think we should X* → *Do X*.
+- Throat-clearing verbs: *It seems that X* → *X*. *I think X* → *X*.
 - Wrap-up paragraphs that restate what was just said.
 - **Numbered summaries after completing work.** The user saw the work happen. Don't enumerate "1. Root cause... 2. Fix... 3. Test fix..." — that's restating the diff.
 - **"To summarize the fix" blocks.** If you fixed it, stop. The commit message or PR description is where summaries go, not chat.

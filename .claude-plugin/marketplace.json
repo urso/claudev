@@ -52,8 +52,8 @@
       "category": "documentation"
     },
     {
-      "name": "conscise",
-      "source": "./conscise",
+      "name": "concise",
+      "source": "./concise",
       "description": "Concise communication mode - short sentences, no filler, auto-enabled on session start",
       "keywords": ["communication", "concise", "brevity", "style"],
       "category": "productivity"

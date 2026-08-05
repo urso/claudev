@@ -11,6 +11,7 @@ Extract issues grouped by category:
 - **Bug warnings**: `[warning]` items with `Bug:` / `Impact:` fields
 - **Style warnings**: `[warning]` items with `Style:` / `Rule:` fields
 - **Efficiency warnings**: `[warning]` items with `Efficiency:` / `Context:` / `Suggestion:` fields
+- **Config issues**: `[error]` / `[warning]` items on config files with `Issue:` / `Context:` / `Impact:` fields
 
 If no issues found, report "No issues to validate" and exit.
 
@@ -127,6 +128,46 @@ Analysis: Brief explanation of why this is a real issue.
 If all issues are false positives, return: "No critical bugs confirmed."
 ```
 
+**For config issues** (if any), spawn:
+```
+Task: Validate config issues
+Subagent type: general-purpose
+Model: sonnet
+Prompt:
+You are validating configuration review findings for false positives.
+
+## Config Issues to Validate
+[list config issues]
+
+## Files Under Review
+[file list, including context files marked as unchanged]
+
+## Instructions
+
+For each issue, read the config with surrounding context and determine if it is valid.
+
+FALSE POSITIVE if:
+- The setting is defined elsewhere — a parent chart, a base overlay, a merged
+  values file, a mutating admission controller
+- The value is intentional and documented in the chart or repo
+- The issue is in a file passed as unchanged context, not under review
+- The template renders correctly despite looking suspicious — check the actual
+  rendered output, not just the template source
+- The permission or capability is genuinely required by the workload
+
+TRUE POSITIVE if:
+- The issue manifests at render time or deploy time
+- Embedded code has a real defect with a concrete trigger
+- A security setting is missing with no upstream source
+
+Return ONLY the true positive issues in the original format:
+[error|warning] path/file.yaml:LINE
+Issue: ...
+Impact: ...
+
+If all issues are false positives, return: "No config issues."
+```
+
 ### Merge Validated Results
 
 Collect outputs from all validation agents. Combine the confirmed issues.
@@ -147,6 +188,9 @@ Collect outputs from all validation agents. Combine the confirmed issues.
 
 ### Efficiency Issues (N)
 [validated efficiency issues]
+
+### Config Issues (N)
+[validated config issues]
 
 ---
 Initial findings: X issues

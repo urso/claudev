@@ -2,14 +2,35 @@
 
 Shared review process. The calling skill provides parsed chunks and optional flags.
 
-## Filter Non-Code Files
+## Read the Sections
 
-From each chunk, filter out:
-- `*.md`, `*.json`, `*.yaml`, `*.yml`, `*.txt`, `*.lock`
-- Files in `.git/`, `node_modules/`, `vendor/`, `dist/`, `build/`
-- Generated files — `*.gen.*`, `*_gen.*`, `*.pb.go`, `*.pb.ts`, `*_generated.*`, `*.generated.*`, files with `// Code generated` or `# Generated` header comments
+The diff script classifies files and emits four sections. Do not re-classify —
+use the groups as given.
 
-If no code files remain after filtering, report that and exit.
+- **`## Code`** — pre-chunked by diff size. Feed to the per-chunk reviews below.
+- **`## Config`** — grouped by Helm chart, or `loose` for non-chart configs.
+  Lines marked `context:` are unchanged files supplied for reference only.
+- **`## Docs`** — not reviewed. Report them so the user can ask for a review.
+- **`## Ignored`** — dropped, with a reason. Report them so a misclassification
+  is visible and correctable.
+
+Each file line is `path <total> +<added> -<deleted>`, where total is the sum that
+drives chunking. A delete-heavy file is a removal to check for orphaned
+references; an add-heavy one is new logic to audit.
+
+Files carry a status tag when they are not a plain modification — `(added)`,
+`(deleted)`, `(renamed)`, `(copied)`. The `+N -M` split is omitted for adds and
+deletes, where it says nothing the tag doesn't. Pass these through to the review
+agents:
+
+- **`(deleted)`** — the file is gone. Do not try to read it. Review the deletion
+  itself: dangling references, removed cleanup, a template whose values are now
+  orphaned.
+- **`(added)`** — no prior version. Regression comparisons do not apply.
+- **`(renamed)`** — the path shown is the new one.
+
+If both Code and Config are absent, report that and exit. If one is absent, run
+the other and skip its sections.
 
 ## Load Story Context (if provided)
 
@@ -121,6 +142,33 @@ Acceptance criteria to verify:
 Follow the instructions to verify each criterion and report pass/fail.
 ```
 
+### Config Review
+
+Skip if no config files, or if any `--*-only` flag was given.
+
+Spawn **one agent for all config files**. Config diffs are small, and the groups
+are context for the agent — not a fan-out key.
+
+```
+Task: Run config review
+Model: sonnet — use opus if any group contains embedded shell, RBAC, or securityContext
+
+Read the config review instructions from ${CLAUDE_PLUGIN_ROOT}/skills/review-code/references/config.md.
+
+Review these files, grouped by chart. Each group's context files are unchanged —
+use them to resolve value references, but do NOT report issues in them.
+
+[paste the `## Config` section verbatim — groups, context lines, and all]
+
+Story context: [if provided]
+
+Follow the instructions to review each file and report issues.
+```
+
+Config files also get a style pass — `style.md` picks up embedded languages, so a
+ConfigMap holding shell is checked against the project's `shell` rules. Include
+config files in the style review chunks.
+
 ## Collect and Merge Results
 
 Wait for all agents to complete, then merge findings grouped by severity:
@@ -129,6 +177,8 @@ Wait for all agents to complete, then merge findings grouped by severity:
 - **Style warnings**: Style review [warning] items
 - **Efficiency warnings**: Efficiency review [warning] items
 - **Test warnings**: Test review [warning] items
+- **Config errors**: Config review [error] items
+- **Config warnings**: Config review [warning] items
 - **Acceptance criteria**: [pass]/[fail]/[unclear] items (if story provided)
 
 ## Validate for False Positives
@@ -142,6 +192,7 @@ Assign typed IDs to each finding:
 - **S1, S2, ...** — Style issues
 - **E1, E2, ...** — Efficiency issues
 - **T1, T2, ...** — Test issues
+- **C1, C2, ...** — Config issues
 - **A1, A2, ...** — Acceptance criteria
 
 **Preserve detail for complex findings.** Sub-agents produce rich output for bugs, efficiency, and test coverage gaps. Include that detail — don't flatten to one-liners.
@@ -149,7 +200,7 @@ Assign typed IDs to each finding:
 ```
 ## Code Review Summary
 
-Reviewed X files in Y chunks (validated for false positives).
+Reviewed X code files in Y chunks and Z config files (validated for false positives).
 
 ### Critical Bugs
 
@@ -183,8 +234,23 @@ S1. path/to/file.ext:LINE — Description
 **Actually tests:** ...
 **Gap:** ...
 
+### Config Issues
+
+#### C1. [error] path/to/values.yaml:LINE
+**Issue:** ...
+**Context:** ...
+**Impact:** ...
+**Fix:** ...
+
 ### Clean Files
 [files with no confirmed issues]
+
+### Not Reviewed
+docs/design.md — docs
+go.sum — lockfile
+internal/api/api.pb.go — generated
+
+Ask to review any of these explicitly if the classification is wrong.
 
 ---
 Initial findings: X issues

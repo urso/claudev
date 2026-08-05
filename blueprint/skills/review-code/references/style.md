@@ -8,20 +8,30 @@ Review code changes for compliance with project style guides.
 
 ## Process
 
-### 1. Identify File Types
+### 1. Identify Languages
 
-From the file list provided to you, note the file extensions (e.g., `.go`, `.ts`, `.py`).
-These determine which rules apply.
+From the file list, note which languages are present. `applies-to` matches
+language names, not extensions — `.py` → `python`, `.sh` → `shell`.
+
+Include languages **embedded** in other files: shell inside a YAML ConfigMap is
+`shell`.
 
 ### 2. Load Style Rules
 
-For each file type, run LIST_RULES with the applies-to filter:
+```bash
+bash LIST_RULES "" "<language>" style   # once per language
+bash LIST_RULES "" "*" style            # universal — always
+```
+
+`main.go` + `deploy.sh`:
 
 ```bash
-bash LIST_RULES "" "go" style    # for .go files
-bash LIST_RULES "" "ts" style    # for .ts files
-bash LIST_RULES "" "*" style     # universal rules (always load these)
+bash LIST_RULES "" "go" style
+bash LIST_RULES "" "shell" style
+bash LIST_RULES "" "*" style
 ```
+
+Nothing returned → no rules for that language. Skip it; don't invent conventions.
 
 Output format (pipe-separated): `filename|name|applies-to|tags|paths|description`
 
