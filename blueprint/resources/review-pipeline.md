@@ -181,9 +181,13 @@ Wait for all agents to complete, then merge findings grouped by severity:
 - **Config warnings**: Config review [warning] items
 - **Acceptance criteria**: [pass]/[fail]/[unclear] items (if story provided)
 
-## Validate for False Positives
+## Validate Findings
 
-If issues were found, read `${CLAUDE_PLUGIN_ROOT}/skills/review-code/references/validate.md` for validation instructions. Spawn validation sub-agents to check each issue category with appropriate model tiers (haiku for style, sonnet for bug warnings, opus for critical bugs).
+If issues were found, read `${CLAUDE_PLUGIN_ROOT}/skills/review-code/references/validate.md` for validation instructions. Spawn validation sub-agents to score each issue category with appropriate model tiers (haiku for style, sonnet for bug warnings, opus for critical bugs).
+
+Validators return a `Confidence: NN` (0-100) per issue rather than a keep/drop
+verdict. Keep issues scoring **>= 75**; drop the rest, tracking the dropped count
+per category for the summary.
 
 ## Present Combined Report
 
@@ -200,11 +204,11 @@ Assign typed IDs to each finding:
 ```
 ## Code Review Summary
 
-Reviewed X code files in Y chunks and Z config files (validated for false positives).
+Reviewed X code files in Y chunks and Z config files (validated, confidence >= 75).
 
 ### Critical Bugs
 
-#### B1. [error] <short title>
+#### B1. [error] <short title> (confidence NN)
 **What this code does:** ...
 **Trigger:** t0 → t1 → t2 → failure
 **Severity:** critical/major/minor — merge-blocking? why?
@@ -212,31 +216,31 @@ Reviewed X code files in Y chunks and Z config files (validated for false positi
 
 ### Bug Warnings
 
-#### B3. [warning] path/to/file.ext:LINE
+#### B3. [warning] path/to/file.ext:LINE (confidence NN)
 **Bug:** ...
 **Impact:** ...
 **Fix:** ...
 
 ### Style Issues
-S1. path/to/file.ext:LINE — Description
+S1. path/to/file.ext:LINE — Description (confidence NN)
 
 ### Efficiency Issues
 
-#### E1. [warning] path/to/file.ext:LINE
+#### E1. [warning] path/to/file.ext:LINE (confidence NN)
 **Issue:** ...
 **Impact:** ...
 **Fix:** ...
 
 ### Test Issues
 
-#### T1. [warning] path/to/file_test.ext:LINE
+#### T1. [warning] path/to/file_test.ext:LINE (confidence NN)
 **Claims to test:** ...
 **Actually tests:** ...
 **Gap:** ...
 
 ### Config Issues
 
-#### C1. [error] path/to/values.yaml:LINE
+#### C1. [error] path/to/values.yaml:LINE (confidence NN)
 **Issue:** ...
 **Context:** ...
 **Impact:** ...
@@ -252,12 +256,17 @@ internal/api/api.pb.go — generated
 
 Ask to review any of these explicitly if the classification is wrong.
 
+### Borderline (not reported)
+[dropped findings scoring 65-74 — title and score only]
+
 ---
 Initial findings: X issues
-After validation: Y confirmed (Z filtered as false positives)
+After validation: Y confirmed at confidence >= 75 (Z below threshold)
 ```
 
 Users can reference findings by ID: "fix B3", "ignore S1-S3", "explain E2".
+They can also ask to lower the threshold — "show everything above 50" — which
+re-filters the already-scored findings without re-running the review.
 
 ## Report Acceptance Criteria (if story provided)
 

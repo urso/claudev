@@ -1,6 +1,31 @@
 # Validation Instructions
 
-Validate review findings by spawning sub-agents to check each issue category for false positives.
+Validate review findings by spawning sub-agents to score each issue's confidence,
+then filter out low-confidence findings.
+
+## Confidence Scale
+
+Each validator assigns every issue a **confidence** score from 0 to 100 — how
+certain it is that the issue is real, given the code it read.
+
+| Range | Meaning |
+|-------|---------|
+| 90-100 | Confirmed. Traced the code; the issue provably manifests. |
+| 75-89  | Likely real. Strong evidence, minor unverified assumptions. |
+| 50-74  | Plausible but unproven. Depends on context the validator could not confirm. |
+| 25-49  | Probably wrong. Evidence leans against it. |
+| 0-24   | False positive. The code is correct, or the rule does not apply. |
+
+**Threshold: keep issues with confidence >= 75.** Everything below is filtered.
+
+Score the *issue*, not its severity. A cosmetic style nit that definitely applies
+scores high; a catastrophic race condition that might not be reachable scores low.
+
+Calibration rules for validators:
+- Do not default to 75. If you did not read enough to be sure, the score is below 75.
+- A duplicate of another issue in the list scores 0.
+- An issue in unchanged / pre-existing code scores 0.
+- Uncertainty about whether a code path is reachable caps the score at 60.
 
 ## Process
 
@@ -19,13 +44,17 @@ If no issues found, report "No issues to validate" and exit.
 
 Spawn validation sub-agents based on issue type. Run all validators in parallel.
 
+Every validator returns **all** issues it was given, each with a `Confidence:` line
+and a one-line `Reason:`. The orchestrator does the filtering — validators do not
+drop issues themselves.
+
 **For style warnings** (if any), spawn:
 ```
 Task: Validate style issues
 Subagent type: general-purpose
 Model: haiku
 Prompt:
-You are validating style review findings for false positives.
+You are scoring style review findings for confidence.
 
 ## Style Issues to Validate
 [list style [warning] issues]
@@ -33,23 +62,26 @@ You are validating style review findings for false positives.
 ## Files Under Review
 [file list]
 
+## Confidence Scale
+[paste the Confidence Scale section above]
+
 ## Instructions
 
 1. For each unique rule file referenced (e.g., "Rule: common.md - ..."), read that rule file from docs/ai/rules/ to understand the full rule context.
 
-2. For each issue, read the relevant code and determine if it's a TRUE or FALSE positive.
+2. For each issue, read the relevant code and assign a confidence score.
 
-FALSE POSITIVE if:
+Score low when:
 - The code actually follows the stated rule when considering full rule context
 - The rule doesn't apply to this code pattern
 - The issue duplicates another in the list
 
-Return ONLY the true positive issues in the original format:
+Return EVERY issue in this format, none omitted:
 [warning] path/file.ext:LINE
 Style: ...
 Rule: ...
-
-If all issues are false positives, return: "No style issues."
+Confidence: NN
+Reason: one line on what drove the score
 ```
 
 **For bug warnings** (if any), spawn:
@@ -58,7 +90,7 @@ Task: Validate bug warnings
 Subagent type: general-purpose
 Model: sonnet
 Prompt:
-You are validating bug review warnings for false positives.
+You are scoring bug review warnings for confidence.
 
 ## Bug Warnings to Validate
 [list bug [warning] issues]
@@ -66,22 +98,25 @@ You are validating bug review warnings for false positives.
 ## Files Under Review
 [file list]
 
+## Confidence Scale
+[paste the Confidence Scale section above]
+
 ## Instructions
 
-For each warning, read the code with surrounding context and determine if the concern is valid.
+For each warning, read the code with surrounding context and score how certain you are the concern is valid.
 
-FALSE POSITIVE if:
+Score low when:
 - The described scenario cannot actually occur given the code flow
 - The code handles the case correctly when considering full context
 - Language/framework guarantees prevent the issue
 - The issue is in unchanged/pre-existing code
 
-Return ONLY the true positive issues in the original format:
+Return EVERY issue in this format, none omitted:
 [warning] path/file.ext:LINE
 Bug: ...
 Impact: ...
-
-If all issues are false positives, return: "No bug warnings."
+Confidence: NN
+Reason: one line on what drove the score
 ```
 
 **For bug errors** (if any), spawn:
@@ -90,7 +125,7 @@ Task: Validate critical bugs
 Subagent type: general-purpose
 Model: opus
 Prompt:
-You are validating critical bug findings. These require deep analysis - especially for race conditions, ownership issues, and memory safety.
+You are scoring critical bug findings for confidence. These require deep analysis - especially for race conditions, ownership issues, and memory safety.
 
 ## Critical Issues to Validate
 [list bug [error] issues]
@@ -98,9 +133,12 @@ You are validating critical bug findings. These require deep analysis - especial
 ## Files Under Review
 [file list]
 
+## Confidence Scale
+[paste the Confidence Scale section above]
+
 ## Instructions
 
-For EACH error, perform thorough analysis:
+For EACH error, perform thorough analysis before scoring:
 
 1. Read the full file(s) involved, not just the flagged line
 2. Trace data flow and control flow around the issue
@@ -109,23 +147,24 @@ For EACH error, perform thorough analysis:
 5. For null/nil issues: check all paths that reach the flagged code
 6. Consider framework/language guarantees that might prevent the issue
 
-FALSE POSITIVE if:
+Score high (90+) when:
+- You traced a concrete path where the bug manifests under realistic conditions
+- No existing guards prevent the issue
+
+Score low when:
 - Deep analysis shows the issue cannot occur
 - Synchronization/guards exist that the original review missed
 - Language semantics guarantee safety
 - The code path is unreachable
 
-TRUE POSITIVE if:
-- The bug can actually manifest under realistic conditions
-- No existing guards prevent the issue
+If you could not complete the trace, say so and score below 75 rather than guessing.
 
-Return ONLY true positive issues in format:
+Return EVERY issue in this format, none omitted:
 [error] path/file.ext:LINE
 Bug: ...
 Impact: ...
-Analysis: Brief explanation of why this is a real issue.
-
-If all issues are false positives, return: "No critical bugs confirmed."
+Confidence: NN
+Analysis: Brief explanation of the trace and what drove the score.
 ```
 
 **For config issues** (if any), spawn:
@@ -134,7 +173,7 @@ Task: Validate config issues
 Subagent type: general-purpose
 Model: sonnet
 Prompt:
-You are validating configuration review findings for false positives.
+You are scoring configuration review findings for confidence.
 
 ## Config Issues to Validate
 [list config issues]
@@ -142,11 +181,14 @@ You are validating configuration review findings for false positives.
 ## Files Under Review
 [file list, including context files marked as unchanged]
 
+## Confidence Scale
+[paste the Confidence Scale section above]
+
 ## Instructions
 
-For each issue, read the config with surrounding context and determine if it is valid.
+For each issue, read the config with surrounding context and score it.
 
-FALSE POSITIVE if:
+Score low when:
 - The setting is defined elsewhere — a parent chart, a base overlay, a merged
   values file, a mutating admission controller
 - The value is intentional and documented in the chart or repo
@@ -155,22 +197,29 @@ FALSE POSITIVE if:
   rendered output, not just the template source
 - The permission or capability is genuinely required by the workload
 
-TRUE POSITIVE if:
+Score high when:
 - The issue manifests at render time or deploy time
 - Embedded code has a real defect with a concrete trigger
 - A security setting is missing with no upstream source
 
-Return ONLY the true positive issues in the original format:
+Return EVERY issue in this format, none omitted:
 [error|warning] path/file.yaml:LINE
 Issue: ...
 Impact: ...
-
-If all issues are false positives, return: "No config issues."
+Confidence: NN
+Reason: one line on what drove the score
 ```
 
-### Merge Validated Results
+### Filter and Merge Validated Results
 
-Collect outputs from all validation agents. Combine the confirmed issues.
+Collect outputs from all validation agents. Then:
+
+1. **Keep** issues with `Confidence >= 75`.
+2. **Drop** issues below 75, but keep a count per category for the summary.
+3. If a validator returns an issue with no `Confidence:` line, treat it as 50 — dropped.
+
+Carry the confidence value into the final report so the user can judge borderline
+findings.
 
 ### Present Validated Report
 
@@ -178,21 +227,25 @@ Collect outputs from all validation agents. Combine the confirmed issues.
 ## Validation Summary
 
 ### Critical Bugs (N)
-[validated error-level bug issues]
+[kept error-level bug issues, each with its confidence]
 
 ### Bug Warnings (N)
-[validated warning-level bug issues]
+[kept warning-level bug issues]
 
 ### Style Issues (N)
-[validated style issues]
+[kept style issues]
 
 ### Efficiency Issues (N)
-[validated efficiency issues]
+[kept efficiency issues]
 
 ### Config Issues (N)
-[validated config issues]
+[kept config issues]
 
 ---
 Initial findings: X issues
-After validation: Y confirmed issues (Z filtered as false positives)
+After validation: Y confirmed at confidence >= 75 (Z filtered below threshold)
 ```
+
+If any dropped issue scored 65-74, list it under a `Borderline (not reported)`
+heading with its title and score — near-misses are worth a glance, and hiding them
+entirely loses information the validator paid for.
