@@ -1,6 +1,6 @@
 {
   "name": "misc",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "description": "Miscellaneous workflow utilities - commit messages, session handover",
   "author": {
     "name": "urso"
