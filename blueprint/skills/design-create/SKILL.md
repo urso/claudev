@@ -9,7 +9,7 @@ hooks:
     - matcher: "Write|Edit"
       hooks:
         - type: command
-          command: "hook-validate-doc.sh"
+          command: "${CLAUDE_PLUGIN_ROOT}/bin/hook-validate-doc.sh"
 ---
 
 # Create Design Document
