@@ -12,10 +12,10 @@ Load story and design context for code review, discussion, or planning. Does **n
 
 ## Variables
 
-- **RESOLVE_DIR**: `${CLAUDE_PLUGIN_ROOT}/scripts/resolve-dir.sh`
-- **QUERY_WORK**: `${CLAUDE_PLUGIN_ROOT}/scripts/query-work.sh`
-- **FIND_DOC**: `${CLAUDE_PLUGIN_ROOT}/scripts/find-doc.sh`
-- **LIST_RULES**: `${CLAUDE_PLUGIN_ROOT}/scripts/list-rules.sh`
+- **RESOLVE_DIR**: `resolve-dir.sh`
+- **QUERY_WORK**: `query-work.sh`
+- **FIND_DOC**: `find-doc.sh`
+- **LIST_RULES**: `list-rules.sh`
 
 ## User Input
 ```
@@ -25,7 +25,7 @@ $ARGUMENTS
 ## Pre-computed Context
 
 ### All Rules
-!`bash ${CLAUDE_PLUGIN_ROOT}/scripts/list-rules.sh`
+!`list-rules.sh`
 
 Output format (grouped by directory, pipe-separated columns):
 ```

@@ -12,7 +12,7 @@ Comprehensive code review checking style guide compliance, bugs/logic errors, an
 
 ## Variables
 
-- **DIFF_FILES**: `${CLAUDE_PLUGIN_ROOT}/scripts/diff-files.sh`
+- **DIFF_FILES**: `diff-files.sh`
 - **REVIEW_PIPELINE**: `${CLAUDE_PLUGIN_ROOT}/resources/review-pipeline.md`
 
 ## User Input

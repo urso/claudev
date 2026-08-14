@@ -12,7 +12,7 @@ Review all code changes on the current branch compared to the base branch.
 
 ## Variables
 
-- **PR_DIFF_FILES**: `${CLAUDE_PLUGIN_ROOT}/scripts/pr-diff-files.sh`
+- **PR_DIFF_FILES**: `pr-diff-files.sh`
 - **REVIEW_PIPELINE**: `${CLAUDE_PLUGIN_ROOT}/resources/review-pipeline.md`
 
 ## User Input

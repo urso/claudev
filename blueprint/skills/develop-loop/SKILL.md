@@ -12,7 +12,7 @@ Full orchestrated development workflow: implement story tasks, fix build, review
 
 ## Variables
 
-- **QUERY_STORIES**: `${CLAUDE_PLUGIN_ROOT}/scripts/query-stories.sh`
+- **QUERY_STORIES**: `query-stories.sh`
 
 ## User Input
 ```
@@ -24,7 +24,7 @@ Parse for story file or name.
 ## Pre-computed Context
 
 ### Actionable Stories
-!`bash ${CLAUDE_PLUGIN_ROOT}/scripts/query-stories.sh --actionable`
+!`query-stories.sh --actionable`
 
 ## Process
 

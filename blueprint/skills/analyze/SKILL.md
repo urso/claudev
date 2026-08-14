@@ -12,7 +12,7 @@ Explore codebase against a target (design, story, or requirements) to surface co
 
 ## Variables
 
-- **FIND_DOC**: `${CLAUDE_PLUGIN_ROOT}/scripts/find-doc.sh`
+- **FIND_DOC**: `find-doc.sh`
 
 ## User Input
 ```

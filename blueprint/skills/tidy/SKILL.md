@@ -13,7 +13,7 @@ Tidy and refine code for clarity, consistency, and maintainability while preserv
 
 ## Variables
 
-- **LIST_RULES**: `${CLAUDE_PLUGIN_ROOT}/scripts/list-rules.sh`
+- **LIST_RULES**: `list-rules.sh`
 
 ## User Input
 ```
@@ -35,7 +35,7 @@ Parse for:
 !`git diff --name-only --cached`
 
 ### Style Rules
-!`bash ${CLAUDE_PLUGIN_ROOT}/scripts/list-rules.sh "" "" style`
+!`list-rules.sh "" "" style`
 
 ## Process
 

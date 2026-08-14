@@ -12,8 +12,8 @@ Set worktree focus to a design or story. Focus persists in `.claude-focus` at th
 
 ## Variables
 
-- **QUERY_WORK**: `${CLAUDE_PLUGIN_ROOT}/scripts/query-work.sh`
-- **FIND_DOC**: `${CLAUDE_PLUGIN_ROOT}/scripts/find-doc.sh`
+- **QUERY_WORK**: `query-work.sh`
+- **FIND_DOC**: `find-doc.sh`
 
 ## User Input
 ```

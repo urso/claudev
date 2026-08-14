@@ -13,8 +13,8 @@ Fix build and lint errors using project build configuration.
 
 ## Variables
 
-- **LIST_RULES**: `${CLAUDE_PLUGIN_ROOT}/scripts/list-rules.sh`
-- **QUERY_STORIES**: `${CLAUDE_PLUGIN_ROOT}/scripts/query-stories.sh`
+- **LIST_RULES**: `list-rules.sh`
+- **QUERY_STORIES**: `query-stories.sh`
 
 ## User Input
 ```
@@ -27,10 +27,10 @@ Parse for:
 ## Pre-computed Context
 
 ### Build Rules
-!`bash ${CLAUDE_PLUGIN_ROOT}/scripts/list-rules.sh "" "" build`
+!`list-rules.sh "" "" build`
 
 ### Style Rules
-!`bash ${CLAUDE_PLUGIN_ROOT}/scripts/list-rules.sh "" "" style`
+!`list-rules.sh "" "" style`
 
 Output format (pipe-separated): `filename|name|applies-to|tags|paths|description`
 

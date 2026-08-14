@@ -4,14 +4,14 @@ How to create, modify, and manage stories. The template structure is in STORY_TE
 
 ## Variables
 
-- **RESOLVE_DIR**: `${CLAUDE_PLUGIN_ROOT}/scripts/resolve-dir.sh`
+- **RESOLVE_DIR**: `resolve-dir.sh`
 - **STORY_TEMPLATE**: `${CLAUDE_PLUGIN_ROOT}/templates/story-template.md`
-- **NEXT_ID**: `${CLAUDE_PLUGIN_ROOT}/scripts/next-id.sh`
-- **SET_STATUS**: `${CLAUDE_PLUGIN_ROOT}/scripts/set-status.sh`
-- **SET_BLOCKED_BY**: `${CLAUDE_PLUGIN_ROOT}/scripts/set-blocked-by.sh`
-- **REMOVE_BLOCKED_BY**: `${CLAUDE_PLUGIN_ROOT}/scripts/remove-blocked-by.sh`
-- **QUERY_STORIES**: `${CLAUDE_PLUGIN_ROOT}/scripts/query-stories.sh`
-- **LIST_WORKFLOWS**: `${CLAUDE_PLUGIN_ROOT}/scripts/list-workflows.sh`
+- **NEXT_ID**: `next-id.sh`
+- **SET_STATUS**: `set-status.sh`
+- **SET_BLOCKED_BY**: `set-blocked-by.sh`
+- **REMOVE_BLOCKED_BY**: `remove-blocked-by.sh`
+- **QUERY_STORIES**: `query-stories.sh`
+- **LIST_WORKFLOWS**: `list-workflows.sh`
 
 ## Resolving the Stories Directory
 

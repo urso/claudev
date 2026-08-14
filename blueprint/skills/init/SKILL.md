@@ -41,14 +41,14 @@ description: Universal coding conventions for all languages.
 
 Check and create `docs/ai/workflows/design.md`:
 ```bash
-bash ${CLAUDE_PLUGIN_ROOT}/scripts/get-guidelines.sh design docs/ai/workflows > /dev/null && echo "OK"
+get-guidelines.sh design docs/ai/workflows > /dev/null && echo "OK"
 ```
 
 This creates the design workflow guidelines from template if missing.
 
 Check and create `docs/ai/workflows/story.md`:
 ```bash
-bash ${CLAUDE_PLUGIN_ROOT}/scripts/get-guidelines.sh story docs/ai/workflows > /dev/null && echo "OK"
+get-guidelines.sh story docs/ai/workflows > /dev/null && echo "OK"
 ```
 
 This creates the story workflow guidelines from template if missing.

@@ -15,8 +15,8 @@ Move a completed design and optionally its stories to the archive directory.
 - **DISCOVERY_GUIDE**: `${CLAUDE_PLUGIN_ROOT}/resources/discovery.md`
 - **DESIGN_OPS**: `${CLAUDE_PLUGIN_ROOT}/resources/design-operations.md`
 - **STORY_OPS**: `${CLAUDE_PLUGIN_ROOT}/resources/story-operations.md`
-- **QUERY_STORIES**: `${CLAUDE_PLUGIN_ROOT}/scripts/query-stories.sh`
-- **ARCHIVE_DOC**: `${CLAUDE_PLUGIN_ROOT}/scripts/archive-doc.sh`
+- **QUERY_STORIES**: `query-stories.sh`
+- **ARCHIVE_DOC**: `archive-doc.sh`
 
 ## User Input
 ```

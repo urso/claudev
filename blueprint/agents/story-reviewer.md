@@ -7,7 +7,7 @@ hooks:
     - matcher: "Edit"
       hooks:
         - type: command
-          command: "${CLAUDE_PLUGIN_ROOT}/scripts/hook-validate-doc.sh"
+          command: "hook-validate-doc.sh"
 ---
 
 # Review Story
@@ -17,7 +17,7 @@ Validate a story against guidelines and check for completeness.
 ## Variables
 
 - **DISCOVERY_GUIDE**: `${CLAUDE_PLUGIN_ROOT}/resources/discovery.md`
-- **LIST_WORKFLOWS**: `${CLAUDE_PLUGIN_ROOT}/scripts/list-workflows.sh`
+- **LIST_WORKFLOWS**: `list-workflows.sh`
 
 ## User Input
 ```

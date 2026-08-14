@@ -9,7 +9,7 @@ hooks:
     - matcher: "Edit"
       hooks:
         - type: command
-          command: "${CLAUDE_PLUGIN_ROOT}/scripts/hook-validate-doc.sh"
+          command: "hook-validate-doc.sh"
 ---
 
 # Update Story

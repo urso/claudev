@@ -12,7 +12,7 @@ Create and update style guides in `docs/ai/rules/` to capture conventions and le
 
 ## Variables
 
-- **LIST_RULES**: `${CLAUDE_PLUGIN_ROOT}/scripts/list-rules.sh`
+- **LIST_RULES**: `list-rules.sh`
 
 ## User Input
 ```
@@ -26,7 +26,7 @@ Parse for:
 ## Pre-computed Context
 
 ### Existing Style Rules
-!`bash ${CLAUDE_PLUGIN_ROOT}/scripts/list-rules.sh "" "" style`
+!`list-rules.sh "" "" style`
 
 ## Process
 

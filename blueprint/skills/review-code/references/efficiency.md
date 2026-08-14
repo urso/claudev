@@ -6,7 +6,7 @@ Review code changes for performance inefficiencies — unnecessary allocations, 
 
 ## Variables
 
-- **LIST_RULES**: `${CLAUDE_PLUGIN_ROOT}/scripts/list-rules.sh`
+- **LIST_RULES**: `list-rules.sh`
 
 ## Process
 

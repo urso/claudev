@@ -4,11 +4,11 @@ How to create, modify, and manage designs. Templates are discovered via `bash LI
 
 ## Variables
 
-- **RESOLVE_DIR**: `${CLAUDE_PLUGIN_ROOT}/scripts/resolve-dir.sh`
-- **LIST_TEMPLATES**: `${CLAUDE_PLUGIN_ROOT}/scripts/list-templates.sh`
-- **NEXT_ID**: `${CLAUDE_PLUGIN_ROOT}/scripts/next-id.sh`
-- **SET_STATUS**: `${CLAUDE_PLUGIN_ROOT}/scripts/set-status.sh`
-- **VALIDATE_DOC**: `${CLAUDE_PLUGIN_ROOT}/scripts/validate-doc.sh`
+- **RESOLVE_DIR**: `resolve-dir.sh`
+- **LIST_TEMPLATES**: `list-templates.sh`
+- **NEXT_ID**: `next-id.sh`
+- **SET_STATUS**: `set-status.sh`
+- **VALIDATE_DOC**: `validate-doc.sh`
 
 ## Resolving the Designs Directory
 

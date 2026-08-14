@@ -9,7 +9,7 @@ hooks:
     - matcher: "Write|Edit"
       hooks:
         - type: command
-          command: "${CLAUDE_PLUGIN_ROOT}/scripts/hook-validate-doc.sh"
+          command: "hook-validate-doc.sh"
 ---
 
 # Create Story
@@ -20,8 +20,8 @@ Create a story document for a unit of implementable work. Can be standalone or l
 
 - **DISCOVERY_GUIDE**: `${CLAUDE_PLUGIN_ROOT}/resources/discovery.md`
 - **STORY_OPS**: `${CLAUDE_PLUGIN_ROOT}/resources/story-operations.md`
-- **QUERY_STORIES**: `${CLAUDE_PLUGIN_ROOT}/scripts/query-stories.sh`
-- **LIST_WORKFLOWS**: `${CLAUDE_PLUGIN_ROOT}/scripts/list-workflows.sh`
+- **QUERY_STORIES**: `query-stories.sh`
+- **LIST_WORKFLOWS**: `list-workflows.sh`
 
 ## User Input
 ```
@@ -35,7 +35,7 @@ Parse for:
 ## Pre-computed Context
 
 ### Story Workflows
-!`bash ${CLAUDE_PLUGIN_ROOT}/scripts/list-workflows.sh "" story`
+!`list-workflows.sh "" story`
 
 ## Process
 

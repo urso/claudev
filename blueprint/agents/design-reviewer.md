@@ -7,7 +7,7 @@ hooks:
     - matcher: "Edit"
       hooks:
         - type: command
-          command: "${CLAUDE_PLUGIN_ROOT}/scripts/hook-validate-doc.sh"
+          command: "hook-validate-doc.sh"
 ---
 
 # Review Design
@@ -17,7 +17,7 @@ Validate a design against guidelines and check for internal consistency.
 ## Variables
 
 - **DISCOVERY_GUIDE**: `${CLAUDE_PLUGIN_ROOT}/resources/discovery.md`
-- **LIST_TEMPLATES**: `${CLAUDE_PLUGIN_ROOT}/scripts/list-templates.sh`
+- **LIST_TEMPLATES**: `list-templates.sh`
 - **DEFAULT_REVIEW**: `${CLAUDE_PLUGIN_ROOT}/templates/designs/default/review.md`
 
 ## User Input
