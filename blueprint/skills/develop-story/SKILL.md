@@ -124,7 +124,8 @@ Implement the approved plan directly:
 
 **CRITICAL**: Update the story document before completing:
 
-- Mark ALL completed tasks as `[x]` in the story document
+- Mark completed **task checkboxes** as `[x]` in the story document
+- **NEVER mark acceptance criteria checkboxes** — these are for reviewers only
 - Update Developer Logs sections as needed:
   - **Decision Log**: Key technical decisions and rationale
   - **Blockers Encountered**: Issues faced and resolutions
@@ -148,6 +149,6 @@ After updating the story document, check if significant deviations were logged:
 - **Task Selection**: Only work on user-selected tasks, never modify others
 - **Planning First**: Always plan before implementing, wait for explicit approval
 - **Apply Rules**: Follow all applicable style and build rules from step 2
-- **Update Story**: Mark tasks complete in the story document as you finish them
+- **Update Story**: Mark task checkboxes complete as you finish them (never acceptance criteria — those are for reviewers)
 - **Stay Collaborative**: Keep user informed and ask for confirmation on major changes
 - **Feedback Loop**: Prompt for design update when deviations impact the design
