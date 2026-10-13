@@ -12,8 +12,8 @@ Read-only overview of a design and all its stories. Shows progress, blockers, an
 
 ## Variables
 
-- **FIND_DOC**: `find-doc.sh`
-- **QUERY_STORIES**: `query-stories.sh`
+- **FIND_DOC**: `${CLAUDE_PLUGIN_ROOT}/bin/find-doc.sh`
+- **QUERY_STORIES**: `${CLAUDE_PLUGIN_ROOT}/bin/query-stories.sh`
 
 ## User Input
 ```

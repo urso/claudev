@@ -17,7 +17,7 @@ Validate a design against guidelines and check for internal consistency.
 ## Variables
 
 - **DISCOVERY_GUIDE**: `${CLAUDE_PLUGIN_ROOT}/resources/discovery.md`
-- **LIST_TEMPLATES**: `list-templates.sh`
+- **LIST_TEMPLATES**: `${CLAUDE_PLUGIN_ROOT}/bin/list-templates.sh`
 - **DEFAULT_REVIEW**: `${CLAUDE_PLUGIN_ROOT}/templates/designs/default/review.md`
 
 ## User Input

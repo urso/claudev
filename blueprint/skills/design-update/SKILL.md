@@ -21,9 +21,9 @@ Update a design and its stories based on implementation learnings. Can update th
 - **DISCOVERY_GUIDE**: `${CLAUDE_PLUGIN_ROOT}/resources/discovery.md`
 - **DESIGN_OPS**: `${CLAUDE_PLUGIN_ROOT}/resources/design-operations.md`
 - **STORY_OPS**: `${CLAUDE_PLUGIN_ROOT}/resources/story-operations.md`
-- **QUERY_STORIES**: `query-stories.sh`
-- **SET_STATUS**: `set-status.sh`
-- **LIST_WORKFLOWS**: `list-workflows.sh`
+- **QUERY_STORIES**: `${CLAUDE_PLUGIN_ROOT}/bin/query-stories.sh`
+- **SET_STATUS**: `${CLAUDE_PLUGIN_ROOT}/bin/set-status.sh`
+- **LIST_WORKFLOWS**: `${CLAUDE_PLUGIN_ROOT}/bin/list-workflows.sh`
 
 ## User Input
 ```

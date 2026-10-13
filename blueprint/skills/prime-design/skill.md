@@ -12,9 +12,9 @@ Load design context for code review, discussion, or planning. Does **not** imple
 
 ## Variables
 
-- **RESOLVE_DIR**: `resolve-dir.sh`
-- **FIND_DOC**: `find-doc.sh`
-- **LIST_RULES**: `list-rules.sh`
+- **RESOLVE_DIR**: `${CLAUDE_PLUGIN_ROOT}/bin/resolve-dir.sh`
+- **FIND_DOC**: `${CLAUDE_PLUGIN_ROOT}/bin/find-doc.sh`
+- **LIST_RULES**: `${CLAUDE_PLUGIN_ROOT}/bin/list-rules.sh`
 
 ## User Input
 ```

@@ -13,8 +13,8 @@ Fix build and lint errors using project build configuration.
 
 ## Variables
 
-- **LIST_RULES**: `list-rules.sh`
-- **QUERY_STORIES**: `query-stories.sh`
+- **LIST_RULES**: `${CLAUDE_PLUGIN_ROOT}/bin/list-rules.sh`
+- **QUERY_STORIES**: `${CLAUDE_PLUGIN_ROOT}/bin/query-stories.sh`
 
 ## User Input
 ```

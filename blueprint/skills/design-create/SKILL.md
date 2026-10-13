@@ -20,8 +20,8 @@ Create a design document that captures problem context, goals, approach, and tec
 
 - **DISCOVERY_GUIDE**: `${CLAUDE_PLUGIN_ROOT}/resources/discovery.md`
 - **DESIGN_OPS**: `${CLAUDE_PLUGIN_ROOT}/resources/design-operations.md`
-- **LIST_WORKFLOWS**: `list-workflows.sh`
-- **LIST_TEMPLATES**: `list-templates.sh`
+- **LIST_WORKFLOWS**: `${CLAUDE_PLUGIN_ROOT}/bin/list-workflows.sh`
+- **LIST_TEMPLATES**: `${CLAUDE_PLUGIN_ROOT}/bin/list-templates.sh`
 
 ## User Input
 ```

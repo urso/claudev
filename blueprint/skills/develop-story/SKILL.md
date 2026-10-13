@@ -12,11 +12,11 @@ Develop tasks from a story document with comprehensive planning and implementati
 
 ## Variables
 
-- **RESOLVE_DIR**: `resolve-dir.sh`
-- **QUERY_WORK**: `query-work.sh`
-- **FIND_DOC**: `find-doc.sh`
-- **LIST_RULES**: `list-rules.sh`
-- **LIST_WORKFLOWS**: `list-workflows.sh`
+- **RESOLVE_DIR**: `${CLAUDE_PLUGIN_ROOT}/bin/resolve-dir.sh`
+- **QUERY_WORK**: `${CLAUDE_PLUGIN_ROOT}/bin/query-work.sh`
+- **FIND_DOC**: `${CLAUDE_PLUGIN_ROOT}/bin/find-doc.sh`
+- **LIST_RULES**: `${CLAUDE_PLUGIN_ROOT}/bin/list-rules.sh`
+- **LIST_WORKFLOWS**: `${CLAUDE_PLUGIN_ROOT}/bin/list-workflows.sh`
 
 ## User Input
 ```

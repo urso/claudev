@@ -20,8 +20,8 @@ Create a story document for a unit of implementable work. Can be standalone or l
 
 - **DISCOVERY_GUIDE**: `${CLAUDE_PLUGIN_ROOT}/resources/discovery.md`
 - **STORY_OPS**: `${CLAUDE_PLUGIN_ROOT}/resources/story-operations.md`
-- **QUERY_STORIES**: `query-stories.sh`
-- **LIST_WORKFLOWS**: `list-workflows.sh`
+- **QUERY_STORIES**: `${CLAUDE_PLUGIN_ROOT}/bin/query-stories.sh`
+- **LIST_WORKFLOWS**: `${CLAUDE_PLUGIN_ROOT}/bin/list-workflows.sh`
 
 ## User Input
 ```

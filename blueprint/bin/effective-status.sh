@@ -9,6 +9,11 @@
 #
 # A blocker is resolved if its status is done, cancelled, or archived.
 
+# Compare IDs: strips leading zeros so 0102 matches 102
+ids_match() {
+    [ "$((10#$1))" -eq "$((10#$2))" ] 2>/dev/null
+}
+
 effective_status() {
     local RAW_STATUS="$1"
     local BLOCKED_BY="$2"
@@ -23,7 +28,7 @@ effective_status() {
                     BSTATUS=""
                     while IFS='=' read -r MID MSTATUS; do
                         [ -z "$MID" ] && continue
-                        if [ "$MID" -eq "$BID" ] 2>/dev/null; then
+                        if ids_match "$MID" "$BID"; then
                             BSTATUS="$MSTATUS"
                             break
                         fi
@@ -52,7 +57,7 @@ unresolved_blockers() {
             BSTATUS=""
             while IFS='=' read -r MID MSTATUS; do
                 [ -z "$MID" ] && continue
-                if [ "$MID" -eq "$BID" ] 2>/dev/null; then
+                if ids_match "$MID" "$BID"; then
                     BSTATUS="$MSTATUS"
                     break
                 fi

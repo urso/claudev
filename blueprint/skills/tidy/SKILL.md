@@ -13,7 +13,7 @@ Tidy and refine code for clarity, consistency, and maintainability while preserv
 
 ## Variables
 
-- **LIST_RULES**: `list-rules.sh`
+- **LIST_RULES**: `${CLAUDE_PLUGIN_ROOT}/bin/list-rules.sh`
 
 ## User Input
 ```

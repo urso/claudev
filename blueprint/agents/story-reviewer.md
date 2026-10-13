@@ -17,7 +17,7 @@ Validate a story against guidelines and check for completeness.
 ## Variables
 
 - **DISCOVERY_GUIDE**: `${CLAUDE_PLUGIN_ROOT}/resources/discovery.md`
-- **LIST_WORKFLOWS**: `list-workflows.sh`
+- **LIST_WORKFLOWS**: `${CLAUDE_PLUGIN_ROOT}/bin/list-workflows.sh`
 
 ## User Input
 ```

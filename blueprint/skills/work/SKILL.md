@@ -12,8 +12,8 @@ Continue development on the currently focused design or story. Reads `.claude-fo
 
 ## Variables
 
-- **QUERY_WORK**: `query-work.sh`
-- **FIND_DOC**: `find-doc.sh`
+- **QUERY_WORK**: `${CLAUDE_PLUGIN_ROOT}/bin/query-work.sh`
+- **FIND_DOC**: `${CLAUDE_PLUGIN_ROOT}/bin/find-doc.sh`
 - **DEVELOP_STORY**: `blueprint:develop-story`
 
 ## Process

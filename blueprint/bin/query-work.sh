@@ -56,20 +56,30 @@ for f in "$STORY_DIR"/*.md; do
 done
 
 # --- Track which designs have actionable stories ---
+# Using newline-separated list instead of associative array (bash 3.2 compat)
 
-declare -A DESIGN_HAS_ACTIONABLE
+DESIGN_HAS_ACTIONABLE=""
 
 for line in "${STORY_LINES[@]}"; do
     IFS='|' read -r ID FNAME TITLE STATUS DESIGN BLOCKED_BY DESC <<< "$line"
     EFF=$(effective_status "$STATUS" "$BLOCKED_BY" "$STATUS_MAP")
     if [ -n "$DESIGN" ] && [[ "$EFF" == "ready" || "$EFF" == "in-progress" ]]; then
-        DESIGN_HAS_ACTIONABLE["$DESIGN"]=true
+        DESIGN_HAS_ACTIONABLE="${DESIGN_HAS_ACTIONABLE}${DESIGN}"$'\n'
     fi
 done
 
-# --- Output designs and track matched IDs ---
+has_actionable() {
+    echo "$DESIGN_HAS_ACTIONABLE" | grep -qx "$1"
+}
 
-declare -A MATCHED_DESIGNS
+# --- Output designs and track matched IDs ---
+# Using newline-separated list instead of associative array (bash 3.2 compat)
+
+MATCHED_DESIGNS=""
+
+design_matched() {
+    echo "$MATCHED_DESIGNS" | grep -qx "$1"
+}
 
 for f in "$DESIGN_DIR"/*.md; do
     FM=$(yq --front-matter=extract '.' "$f" 2>/dev/null) || continue
@@ -85,10 +95,10 @@ for f in "$DESIGN_DIR"/*.md; do
 
     if $ACTIONABLE; then
         case "$DSTATUS" in done|cancelled|archived) continue ;; esac
-        [ "${DESIGN_HAS_ACTIONABLE[$DID]:-}" = "true" ] || continue
+        has_actionable "$DID" || continue
     fi
 
-    MATCHED_DESIGNS["$DID"]=true
+    MATCHED_DESIGNS="${MATCHED_DESIGNS}${DID}"$'\n'
     echo "design | $DID | $(basename "$f") | $DTITLE | $DSTATUS | | $DDESC"
 done
 
@@ -101,7 +111,7 @@ for line in "${STORY_LINES[@]}"; do
     if [ -n "$SEARCH_FILTER" ]; then
         STORY_MATCHES=false
         echo "$ID $TITLE $DESC" | grep -qi "$SEARCH_FILTER" && STORY_MATCHES=true
-        [ -n "$DESIGN" ] && [ "${MATCHED_DESIGNS[$DESIGN]:-}" = "true" ] && STORY_MATCHES=true
+        [ -n "$DESIGN" ] && design_matched "$DESIGN" && STORY_MATCHES=true
         $STORY_MATCHES || continue
     fi
 

@@ -12,7 +12,7 @@ Load rules (style guides and build configuration) for development work.
 
 ## Variables
 
-- **LIST_RULES**: `list-rules.sh`
+- **LIST_RULES**: `${CLAUDE_PLUGIN_ROOT}/bin/list-rules.sh`
 
 ## User Input
 ```

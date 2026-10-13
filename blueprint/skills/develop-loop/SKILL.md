@@ -12,7 +12,7 @@ Full orchestrated development workflow: implement story tasks, fix build, review
 
 ## Variables
 
-- **QUERY_STORIES**: `query-stories.sh`
+- **QUERY_STORIES**: `${CLAUDE_PLUGIN_ROOT}/bin/query-stories.sh`
 
 ## User Input
 ```

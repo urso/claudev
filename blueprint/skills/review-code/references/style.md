@@ -4,7 +4,7 @@ Review code changes for compliance with project style guides.
 
 ## Variables
 
-- **LIST_RULES**: `list-rules.sh`
+- **LIST_RULES**: `${CLAUDE_PLUGIN_ROOT}/bin/list-rules.sh`
 
 ## Process
 
