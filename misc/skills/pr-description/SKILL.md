@@ -100,14 +100,23 @@ Choose format based on complexity:
 
 ### 5. Output
 
-```
+Emit the title and body as raw text inside fenced code blocks so the user can copy the unrendered markdown. Use a 4-backtick fence for the body so code blocks inside it don't close the fence. Do not add anything inside the fences besides the title/body.
+
+`````
 ## Suggested PR
 
-**Title:** <title>
+**Title:**
+
+```text
+<title>
+```
 
 **Body:**
+
+````markdown
 <body in markdown>
-```
+````
+`````
 
 ## Guidelines
 

@@ -75,14 +75,17 @@ From the diff, identify:
 
 ### 6. Output
 
-```
+Emit the message as raw text inside a fenced code block so the user can copy it unrendered. Do not add anything inside the fence besides the message.
+
+````
 ## Suggested Commit Message
 
-```
+```text
 <title>
 
 <body if needed>
 ```
+````
 
 ## Guidelines
 
